@@ -1,5 +1,7 @@
-/** 韭菜吉祥物资源路径（按场景选用；走线上 static，减小小程序包体） */
-const STATIC = 'https://ajgekjgs.fit/static';
+import { API_BASE } from '../config';
+
+/** 吉祥物走后端 /static，减小小程序包体；地址跟 config.API_BASE */
+const STATIC = `${API_BASE}/static`;
 
 export const MASCOT = {
   /** 标准站立抱账本：启动页 / 关于 / 空状态 / 我的页默认头像 */

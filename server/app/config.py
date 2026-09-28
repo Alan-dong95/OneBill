@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     # 逗号分隔来源；默认 * 方便本地。上线请改为具体域名，如 https://servicewechat.com
     cors_origins: str = "*"
 
+    # 是否暴露 /docs、/redoc、/openapi.json；生产建议 false
+    expose_api_docs: bool = True
+
     # 反馈截图等本地上传目录（相对 server/ 工作目录）；挂载为 /uploads
     upload_dir: str = "uploads"
 

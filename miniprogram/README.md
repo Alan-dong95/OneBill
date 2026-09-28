@@ -6,8 +6,8 @@
 
 1. 用[微信开发者工具](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)打开本目录
 2. 改 `config.ts` 的 `API_BASE`：
-   - 本地：`http://localhost:8000`（需关闭「校验合法域名」）
-   - 线上：`https://ajgekjgs.fit`
+   - 本地（仓库默认）：`http://localhost:8000`（需关闭「校验合法域名」）
+   - 正式版：改成你自己的 HTTPS 域名（勿把生产域名提交进公开仓库）
 3. 如需类型 / 图表依赖：`npm install` 后编译运行
 
 登录在 `app.ts` 的 `onLaunch` 自动完成；Token 存本地，请求统一走 `utils/request`。

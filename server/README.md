@@ -105,126 +105,54 @@ powershell -ExecutionPolicy Bypass -File server/scripts/pack-deploy.ps1
 
 ## 部署
 
-### 线上约定（单实例）
+自备一台云主机即可。公开仓库**不要**写真实域名、公网 IP、面板账号。
 
-| 项 | 当前值 | 备注 |
-|----|--------|------|
-| 机器 | 阿里云 ECS（示例 IP 见域名解析） | 备案 / 接入备案须与云厂商一致 |
-| 域名 | `https://ajgekjgs.fit` | DNS 建议「仅 DNS」、勿开 Cloudflare 橙云代理，国内才稳 |
-| 代码目录 | `/opt/onebill/server` | 线上 `.env`、`.venv` **只在服务器维护**，部署包不带密钥 |
-| 进程 | `systemd` 服务名 `onebill` | 单 worker；限流与周期入账任务都是进程内逻辑，多实例会重复 |
-| 反代 | Nginx → `127.0.0.1:8000` | 对外 443；证书勿提交公开仓库 |
-| CORS | 环境变量 `CORS_ORIGINS` | 生产应收紧；开发可为 `*` |
+### 建议架构（单实例）
+
+| 项 | 建议 |
+|----|------|
+| 进程 | `uvicorn` 单 worker（限流与周期入账是进程内逻辑，多实例会重复） |
+| 反代 | Nginx / Caddy → `127.0.0.1:8000`，对外 HTTPS |
+| 配置 | 线上 `.env`、`.venv`、TLS 证书**只在服务器维护**，勿进 Git、勿打进部署 zip |
+| CORS | 生产收紧 `CORS_ORIGINS`；开发可为 `*` |
+| 文档 | 生产设 `EXPOSE_API_DOCS=false`，关掉 `/docs` 与 OpenAPI |
 
 水平扩展前需先换 Redis 限流 + 外部 cron，再上多 worker。
 
-### 日常更新（推荐流程）
+### 日常更新（概要）
 
-以下在 **Windows 本机**打包装包，在 **服务器**解压同步。路径按实际改。
+1. **本机打包**（排除 `.venv` / `.env`）：
 
-#### 1. 本机打包
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File server/scripts/pack-deploy.ps1
+   ```
 
-在仓库根目录执行：
+2. **上传到服务器**（把主机与密钥换成你自己的）：
 
-```powershell
-# 排除 .venv / .env / 各类 cache，生成 server-deploy-yyyyMMdd-HHmmss.zip
-powershell -ExecutionPolicy Bypass -File server/scripts/pack-deploy.ps1
-```
+   ```powershell
+   scp -i $env:USERPROFILE\.ssh\id_ed25519 .\server-deploy-*.zip root@YOUR_SERVER_IP:/tmp/server-deploy.zip
+   scp -i $env:USERPROFILE\.ssh\id_ed25519 .\server\scripts\remote-sync-deploy.sh root@YOUR_SERVER_IP:/tmp/remote-sync-deploy.sh
+   ```
 
-备注：
+3. **服务器上**：备份业务目录 → 解压到临时目录 → 跑 `remote-sync-deploy.sh`（脚本会跳过 `.env` / `.venv`，再 `pip` / `alembic` / 重启服务）。
 
-- zip 打在仓库根目录，不是 `server/` 里
-- **不要**把本机 `.env` 打进包；线上密钥与本机往往不同
-- 打包前确认要上线的改动已保存；无新 Python 依赖时服务器上 `pip install` 很快
+4. **验收**：`curl -sS https://YOUR_DOMAIN/health` 期望 `{"status":"ok"}`。
 
-#### 2. 上传到服务器
-
-本机已配置 SSH 密钥时（示例）：
-
-```powershell
-# 把下面 zip 名换成刚打出来的文件名；密钥路径按本机实际改
-$zip = ".\server-deploy-yyyyMMdd-HHmmss.zip"
-$key = "$env:USERPROFILE\.ssh\id_ed25519"
-
-# 部署包放到 /tmp，避免直接盖到业务目录
-scp -i $key $zip root@你的服务器IP:/tmp/server-deploy.zip
-
-# 同步脚本一并上传（首次或脚本有改动时）
-scp -i $key .\server\scripts\remote-sync-deploy.sh root@你的服务器IP:/tmp/remote-sync-deploy.sh
-```
-
-备注：
-
-- 没有密钥时先用面板 / 密码登录，把本机公钥写入服务器 `~/.ssh/authorized_keys`
-- 也可用宝塔 / SFTP 把 zip 传到 `/tmp`，效果相同
-
-#### 3. 服务器上备份 → 解压 → 同步 → 重启
-
-SSH 登录后执行（或本机一条 `ssh ...` 远程跑）：
-
-```bash
-set -e
-TS=$(date +%Y%m%d%H%M%S)
-
-# 整目录备份，出问题可快速回滚：cp -a server.bak.$TS server（先停服务再盖）
-cp -a /opt/onebill/server "/opt/onebill/server.bak.$TS"
-
-# 解压到临时目录；Windows 打的 zip 偶发警告，用 || true 避免误中断，再用目录是否存在校验
-rm -rf /tmp/onebill-unpack
-mkdir -p /tmp/onebill-unpack
-unzip -o /tmp/server-deploy.zip -d /tmp/onebill-unpack >/tmp/unzip.log 2>&1 || true
-test -d /tmp/onebill-unpack/app || { echo "unpack failed, see /tmp/unzip.log"; exit 1; }
-
-# 去 CRLF 后执行同步脚本（脚本会跳过 .env / .venv，再 pip / alembic / restart）
-sed -i 's/\r$//' /tmp/remote-sync-deploy.sh
-chmod +x /tmp/remote-sync-deploy.sh
-bash /tmp/remote-sync-deploy.sh
-```
-
-`remote-sync-deploy.sh` 会依次：
-
-1. 把 `/tmp/onebill-unpack/*` 覆盖到 `/opt/onebill/server/`（**跳过** `.env`、`.venv`）
-2. `pip install -r requirements.txt`（有新依赖才真正变版本）
-3. `alembic upgrade head`（无新迁移则空跑）
-4. `systemctl restart onebill`
-5. 检查 `systemctl is-active` 与本机 `http://127.0.0.1:8000/health`
-
-备注：
-
-- **绝对不要**用本机 `.env` 覆盖线上；数据库密码、微信 Secret、JWT 都以服务器为准
-- `uploads/` 若在业务目录内且 zip 里没有，同步脚本按「包内有的项」覆盖；重要上传文件建议单独挂盘或事先确认不会被删
-- 回滚：停服务 → 用最近的 `server.bak.*` 盖回 → `systemctl start onebill`
-
-#### 4. 验收
-
-```bash
-# 本机或服务器均可
-curl -sS https://ajgekjgs.fit/health
-# 期望：{"status":"ok"}
-
-# 可选：看新路由是否进 OpenAPI（按本次改动替换路径）
-curl -sS http://127.0.0.1:8000/openapi.json | python3 -c \
-  "import sys,json; print('/api/v1/bills/batch' in json.load(sys.stdin).get('paths',{}))"
-```
-
-小程序正式版须指向 HTTPS 域名；本地调试把 `miniprogram/config.ts` 的 `API_BASE` 改为 `http://localhost:8000`，并关闭合法域名校验。
+小程序正式版须指向你自己的 HTTPS 域名；本地调试把 `miniprogram/config.ts` 的 `API_BASE` 保持为 `http://localhost:8000`，并关闭合法域名校验。
 
 ### 首次在空机器上装（概要）
 
-已有线上实例可跳过。新机大致顺序：
-
 1. 装 PostgreSQL 16 + pgvector，建库，配好 `DATABASE_URL`
-2. 把代码放到 `/opt/onebill/server`，`python -m venv .venv`，`pip install -r requirements.txt`
-3. 从 `.env.example` 写线上 `.env`（微信 / JWT / LLM / Embedding）
+2. 放置代码，建 `.venv`，`pip install -r requirements.txt`
+3. 从 `.env.example` 写线上 `.env`（微信 / JWT / LLM / Embedding）；生产关闭 API 文档
 4. `alembic upgrade head`
-5. 配 systemd：`WorkingDirectory=/opt/onebill/server`，启动类似  
-   `uvicorn app.main:app --host 127.0.0.1 --port 8000`（单 worker）
-6. Nginx 反代 443 → 8000，挂证书；安全组放行 80/443
-7. 域名解析到公网 IP；国内访问勿再套一层海外 CDN 代理
+5. 用 systemd（或同类）托管 uvicorn，监听本机端口
+6. 反代 443 → 应用端口，挂证书；安全组只放行 80/443
 
 ### 部署注意
 
 - `.env`、证书私钥、微信 Secret **不要**进 Git、不要打进部署 zip
+- **绝对不要**用本机 `.env` 覆盖线上
 - 限流为单进程内存实现；多 worker 时各进程独立计数，额度会放大
 - 周期账单任务挂在 lifespan 上，多副本会重复执行
 

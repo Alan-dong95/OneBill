@@ -30,9 +30,10 @@ onebill-ai-plan/
 ├── miniprogram/          # 微信小程序（详见 miniprogram/README.md）
 ├── server/               # FastAPI 后端（详见 server/README.md）
 ├── index.html            # 面试项目落地手册
-├── assets/               # 品牌素材
-└── 27415639_*.fit_nginx/ # 线上证书等部署相关（勿提交密钥到公开仓库）
+└── assets/               # 品牌素材
 ```
+
+TLS 证书、服务器 `.env` 只放本机 / 服务器，勿提交公开仓库。
 
 ## 快速开始
 
@@ -62,13 +63,15 @@ uvicorn app.main:app --reload --port 8000
 
 1. 用[微信开发者工具](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)打开 `miniprogram/`
 2. 按需改 `miniprogram/config.ts` 中的 `API_BASE`：
-   - 本地：`http://localhost:8000`（开发者工具需关闭「校验合法域名」）
-   - 线上：当前默认 `https://ajgekjgs.fit`
+   - 本地（仓库默认）：`http://localhost:8000`（开发者工具需关闭「校验合法域名」）
+   - 正式版：改成你自己的 HTTPS 域名（勿把生产域名提交进公开仓库）
 3. `npm install`（如需类型与图表依赖），编译运行
 
 登录在 `app.ts` 的 `onLaunch` 自动完成；Token 存本地并随请求带上。
 
 ## API 摘要
+
+> 路径本身不是密钥；鉴权靠微信登录换 JWT。生产请关闭 Swagger（`EXPOSE_API_DOCS=false`）。
 
 | 方法 | 路径 | 说明 |
 |------|------|------|

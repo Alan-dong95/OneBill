@@ -50,7 +50,14 @@ async def lifespan(app: FastAPI):
             pass
 
 
-app = FastAPI(title="韭菜保护本 API", version="0.1.0", lifespan=lifespan)
+app = FastAPI(
+    title="韭菜保护本 API",
+    version="0.1.0",
+    lifespan=lifespan,
+    docs_url="/docs" if settings.expose_api_docs else None,
+    redoc_url="/redoc" if settings.expose_api_docs else None,
+    openapi_url="/openapi.json" if settings.expose_api_docs else None,
+)
 
 # CORS：.env 的 CORS_ORIGINS；默认 *。多实例时限流/周期任务仍是进程内，见 server/README
 _cors_origins = settings.resolve_cors_origins()
