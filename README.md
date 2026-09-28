@@ -2,8 +2,6 @@
 
 AI 记账微信小程序：语音 / 自然语言一句话入账，自动分类，月度洞察，账单 RAG 问答。
 
-> 产品叙事与面试材料见根目录 [`index.html`](./index.html)（落地手册）。
-
 ## 功能一览
 
 | 能力 | 说明 |
@@ -15,6 +13,7 @@ AI 记账微信小程序：语音 / 自然语言一句话入账，自动分类�
 | 月度洞察 | SQL 聚合 + LLM 自然语言总结，按月缓存 |
 | 账单问答 | 意图分流：聚合走 SQL，明细走 pgvector 语义检索 |
 | 消费统计 | 分类占比、月趋势等（ECharts）；与列表饼图共用 overview |
+| 预算 / 周期账 | 月预算进度；周期账单按日自动入账 |
 
 ## 技术栈
 
@@ -29,7 +28,6 @@ AI 记账微信小程序：语音 / 自然语言一句话入账，自动分类�
 onebill-ai-plan/
 ├── miniprogram/          # 微信小程序（详见 miniprogram/README.md）
 ├── server/               # FastAPI 后端（详见 server/README.md）
-├── index.html            # 面试项目落地手册
 └── assets/               # 品牌素材
 ```
 
@@ -108,21 +106,8 @@ uvicorn app.main:app --reload --port 8000
 - **混合检索问答**：LLM 判意图 → 聚合类走 SQL；回忆类走向量相似度；失败有兜底文案。
 - **月报缓存**：同用户同月默认读缓存，`force=true` 可强制重生。
 
-## 进度对照（相对落地手册）
-
-- [x] 第 0 阶段：骨架、登录、建表
-- [x] 第 1 阶段：账单 CRUD（按用户隔离）
-- [x] 第 2 阶段：AI 自然语言 / 语音解析
-- [x] 第 3 阶段：月度洞察
-- [x] 第 4 阶段：RAG 问答
-- [x] 第 5 阶段：统计页等完善
-- [x] 拍照 OCR 入账（草稿确认后入库）
-- [x] 账单批量创建 + 列表饼图复用 overview
-- [ ] P2：预算提醒 / 订阅检测 / 多账本（未做）
-
 ## 相关文档
 
 - 后端细节与环境变量：[`server/README.md`](./server/README.md)
 - 小程序说明：[`miniprogram/README.md`](./miniprogram/README.md)
 - 环境变量模板：[`server/.env.example`](./server/.env.example)
-- 产品 / 架构 / 面试叙事：[`index.html`](./index.html)

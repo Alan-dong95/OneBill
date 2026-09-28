@@ -12,6 +12,11 @@
     </view>
   </view>
 
+  <view class="link-row" hover-class="link-hover" bindtap="goPrivacy">
+    <text class="link-text">隐私政策</text>
+    <text class="link-arrow">›</text>
+  </view>
+
   <view class="moods">
     <view class="mood">
       <image class="mood-img" src="{{mascotCelebrate}}" mode="aspectFit" />

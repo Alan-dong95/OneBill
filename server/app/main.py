@@ -5,15 +5,31 @@ from datetime import datetime, timedelta
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
-from app.routers import ai, ask, auth, bills, budget, feedback, meta, recurring, report, stats
-from app.services.feedback_storage import resolve_upload_root
+from app.routers import ai, ask, auth, bills, budget, feedback, meta, recurring, report, stats, uploads
 from app.services.recurring import process_due_recurring_bills
 from app.timeutil import CN_TZ
 from app.config import settings
 
 logger = logging.getLogger(__name__)
+
+# 占位 / 过短密钥禁止启动，避免生产误用示例值
+_WEAK_JWT_SECRETS = {
+    "",
+    "please-change-me-to-a-long-random-string",
+    "secret",
+    "changeme",
+    "jwt_secret",
+}
+
+
+def _assert_jwt_secret_safe() -> None:
+    secret = (settings.jwt_secret or "").strip()
+    if secret.lower() in _WEAK_JWT_SECRETS or len(secret) < 32:
+        raise RuntimeError(
+            "JWT_SECRET 过弱或仍是示例值：请换成至少 32 字符的随机串"
+            "（例如 openssl rand -hex 32），并确认线上 .env 未被本机文件覆盖。"
+        )
 
 
 def _seconds_until_next_cn_run(hour: int = 0, minute: int = 10) -> float:
@@ -39,6 +55,7 @@ async def _recurring_daily_loop() -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    _assert_jwt_secret_safe()
     task = asyncio.create_task(_recurring_daily_loop())
     try:
         yield
@@ -79,13 +96,8 @@ app.include_router(feedback.router)
 app.include_router(budget.router)
 app.include_router(recurring.router)
 app.include_router(meta.router)
-
-# 反馈截图等静态文件（目录不存在时先创建）
-app.mount(
-    "/uploads",
-    StaticFiles(directory=str(resolve_upload_root())),
-    name="uploads",
-)
+# 反馈截图：须 Bearer，且只能访问本人 feedback/{user_id}/ 目录
+app.include_router(uploads.router)
 
 
 @app.get("/health")

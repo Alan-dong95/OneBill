@@ -101,7 +101,7 @@ pytest tests/test_category_parity.py -q
 powershell -ExecutionPolicy Bypass -File server/scripts/pack-deploy.ps1
 ```
 
-反馈截图落盘目录默认 `uploads/`（`UPLOAD_DIR`），经 `/uploads/...` 静态访问；历史 JSONB 里的 base64 行不自动迁移。
+反馈截图落盘目录默认 `uploads/`（`UPLOAD_DIR`），经 `GET /uploads/...` **鉴权下载**（须 Bearer，且只能访问本人 `feedback/{user_id}/`）；历史 JSONB 里的 base64 行不自动迁移。
 
 ## 部署
 
@@ -162,6 +162,10 @@ powershell -ExecutionPolicy Bypass -File server/scripts/pack-deploy.ps1
 |------|------|------|------|
 | GET | `/health` | 否 | 健康检查 |
 | POST | `/api/v1/auth/login` | 否 | `code` → JWT（按 IP 限流） |
+| GET | `/api/v1/auth/me` | 是 | 当前用户资料 |
+| PUT | `/api/v1/auth/me` | 是 | 更新昵称 |
+| DELETE | `/api/v1/auth/me` | 是 | 注销账号（删账单/向量/月报/周期账/反馈及截图） |
+| GET | `/uploads/{path}` | 是 | 反馈截图鉴权下载（仅本人目录） |
 | POST | `/api/v1/bills` | 是 | 创建单笔（响应后异步写 embedding；可选周期模板） |
 | POST | `/api/v1/bills/batch` | 是 | 批量创建，body `{ "bills": BillCreate[] }`，1–50 笔，整批同一事务 |
 | GET | `/api/v1/bills` | 是 | 分页列表；`month=YYYY-MM` / `keyword`（有关键词时忽略月份） |

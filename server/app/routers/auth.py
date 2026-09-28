@@ -1,5 +1,8 @@
+import logging
+
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from .. import schemas
@@ -8,13 +11,17 @@ from ..core.rate_limit import SlidingWindowLimiter
 from ..core.security import create_access_token, get_current_openid
 from ..database import get_db
 from ..deps import get_current_user
-from ..models import User
+from ..models import Bill, Feedback, MonthlyReport, RecurringBill, User
+from ..services.feedback_storage import delete_user_upload_dir
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
+logger = logging.getLogger(__name__)
 
 DEFAULT_NICKNAME = "小韭菜"
 # 登录按 IP 限流，防刷 code2session
 _login_limiter = SlidingWindowLimiter(60, 60)
+# 注销按用户限流，防误触连点
+_delete_limiter = SlidingWindowLimiter(3, 3600)
 
 
 def _user_out(user: User) -> schemas.UserOut:
@@ -98,3 +105,48 @@ def update_me(
     db.commit()
     db.refresh(user)
     return _user_out(user)
+
+
+@router.delete("/me", response_model=schemas.DeleteAccountOut)
+def delete_me(
+    openid: str = Depends(get_current_openid),
+    db: Session = Depends(get_db),
+):
+    """注销账号：删账单/向量/月报/周期账/反馈及截图，再删用户行。不可恢复。"""
+    user = get_current_user(db, openid)
+    _delete_limiter.check(f"delete-me:{user.id}")
+    uid = user.id
+
+    # 先清向量，避免删账单后留下孤儿 embedding
+    try:
+        db.execute(
+            text(
+                "DELETE FROM bill_vectors WHERE bill_id IN "
+                "(SELECT id FROM bills WHERE user_id = :uid)"
+            ),
+            {"uid": uid},
+        )
+    except Exception:
+        # 语句失败后 Session 需 rollback，才能继续删其余表
+        logger.exception("注销时清理 bill_vectors 失败 user_id=%s", uid)
+        db.rollback()
+
+    db.query(Bill).filter(Bill.user_id == uid).delete(synchronize_session=False)
+    db.query(MonthlyReport).filter(MonthlyReport.user_id == uid).delete(
+        synchronize_session=False
+    )
+    db.query(RecurringBill).filter(RecurringBill.user_id == uid).delete(
+        synchronize_session=False
+    )
+    db.query(Feedback).filter(Feedback.user_id == uid).delete(synchronize_session=False)
+    # 按 uid 删，避免向量清理失败 rollback 后 user 实例已 detach
+    db.query(User).filter(User.id == uid).delete(synchronize_session=False)
+    db.commit()
+
+    # 磁盘截图放事务外：DB 已删干净即可；失败只打日志
+    try:
+        delete_user_upload_dir(uid)
+    except Exception:
+        logger.exception("注销时清理反馈截图目录失败 user_id=%s", uid)
+
+    return schemas.DeleteAccountOut(ok=True)

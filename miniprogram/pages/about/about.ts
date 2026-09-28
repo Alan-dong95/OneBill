@@ -6,4 +6,8 @@ Page({
     mascotCelebrate: MASCOT.celebrate,
     mascotFleeced: MASCOT.fleeced,
   },
+
+  goPrivacy() {
+    wx.navigateTo({ url: '/pages/privacy/privacy' });
+  },
 });

@@ -1,4 +1,4 @@
-"""业务常量：分类、时段等（与落地手册 / 小程序 utils/categories 对齐）。"""
+"""业务常量：分类、时段等（与小程序 utils/categories 对齐）。"""
 
 # 12 类固定大类；子类不建表，由 LLM 自由产出
 CATEGORY_ORDER = [

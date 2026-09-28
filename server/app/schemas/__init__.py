@@ -2,7 +2,7 @@
 
 from .ai import AiOcrRequest, AiParseRequest, AiParseResponse, AiParseResult
 from .ask import AskRequest, AskResponse
-from .auth import LoginRequest, LoginResponse, UserOut, UserUpdate
+from .auth import DeleteAccountOut, LoginRequest, LoginResponse, UserOut, UserUpdate
 from .bills import (
     BillBatchCreate,
     BillBatchOut,
@@ -50,6 +50,7 @@ __all__ = [
     "BudgetSet",
     "CategoriesOut",
     "CategoryStat",
+    "DeleteAccountOut",
     "FeedbackCreate",
     "FeedbackOut",
     "LoginRequest",

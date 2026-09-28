@@ -101,6 +101,7 @@ Page({
     nickDraft: '',
     savingNick: false,
     exporting: false,
+    deletingAccount: false,
   },
 
   onShow() {
@@ -277,6 +278,10 @@ Page({
     wx.navigateTo({ url: '/pages/about/about' });
   },
 
+  goPrivacy() {
+    wx.navigateTo({ url: '/pages/privacy/privacy' });
+  },
+
   goFeedback() {
     wx.navigateTo({ url: '/pages/feedback/feedback' });
   },
@@ -289,14 +294,74 @@ Page({
       confirmColor: '#e74c3c',
       success: (res) => {
         if (!res.confirm) return;
-        wx.removeStorageSync('token');
-        const app = getApp<IAppOption>();
-        if (app?.globalData) {
-          app.globalData.token = '';
-        }
+        this.clearLocalSession();
         wx.switchTab({ url: '/pages/index/index' });
       },
     });
+  },
+
+  /** 注销：二次确认 → 删服务端数据 → 清本地 */
+  onDeleteAccount() {
+    if (this.data.deletingAccount) return;
+    wx.showModal({
+      title: '注销账号',
+      content: '账单、月报、周期账、反馈会全部删掉，且不可恢复。确定？',
+      confirmText: '继续',
+      confirmColor: '#e74c3c',
+      success: (res) => {
+        if (!res.confirm) return;
+        wx.showModal({
+          title: '最后确认',
+          content: '真的注销？协会账本要清空了。',
+          confirmText: '注销',
+          confirmColor: '#e74c3c',
+          success: (res2) => {
+            if (!res2.confirm) return;
+            this.doDeleteAccount();
+          },
+        });
+      },
+    });
+  },
+
+  async doDeleteAccount() {
+    if (this.data.deletingAccount) return;
+    this.setData({ deletingAccount: true });
+    wx.showLoading({ title: '注销中…', mask: true });
+    try {
+      await request<{ ok?: boolean }>({
+        url: '/api/v1/auth/me',
+        method: 'DELETE',
+      });
+      wx.hideLoading();
+      this.clearLocalSession({ wipeChat: true });
+      wx.showToast({ title: '账号已注销', icon: 'none' });
+      setTimeout(() => {
+        wx.switchTab({ url: '/pages/index/index' });
+      }, 500);
+    } catch (e) {
+      console.error('[profile] 注销失败', e);
+      wx.hideLoading();
+    } finally {
+      this.setData({ deletingAccount: false });
+    }
+  },
+
+  /** wipeChat：注销时清问答本地缓存；退出登录保留会话记录 */
+  clearLocalSession(opts?: { wipeChat?: boolean }) {
+    wx.removeStorageSync('token');
+    if (opts?.wipeChat) {
+      try {
+        // 与 ask 页 CHAT_HISTORY_KEY 对齐
+        wx.removeStorageSync('chat_history');
+      } catch (e) {
+        // storage 异常不挡注销收尾
+      }
+    }
+    const app = getApp<IAppOption>();
+    if (app?.globalData) {
+      app.globalData.token = '';
+    }
   },
 
   /** 挡住弹窗下层滚动 */

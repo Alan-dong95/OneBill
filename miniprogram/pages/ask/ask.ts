@@ -58,6 +58,15 @@ const CATEGORY_HINTS = [
 const RECORD_MAX_MS = 60000;
 const RECORD_MIN_MS = 500;
 
+function formatRecordDuration(totalSec: number) {
+  const sec = totalSec < 0 ? 0 : totalSec;
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  const mm = m < 10 ? '0' + m : String(m);
+  const ss = s < 10 ? '0' + s : String(s);
+  return mm + ':' + ss;
+}
+
 /** AI 气泡内 mp-html 标签样式（深色字，贴合白底气泡） */
 const AI_TAG_STYLE = {
   p: 'margin:0 0 10px;font-size:14px;line-height:1.65;color:#1a2e1f;',
@@ -160,10 +169,12 @@ Page({
     scrollIntoView: '',
     aiTagStyle: AI_TAG_STYLE,
     aiContainerStyle: 'font-size:14px;line-height:1.65;color:#1a2e1f;',
-    /** 自定义导航：状态栏高度 / 导航内容高度 / 「新对话」距右（避开胶囊） */
+    /** 自定义导航：状态栏 / 导航内容高 / 左侧按钮（对齐胶囊） */
     statusBarHeight: 20,
     navBarHeight: 44,
-    navActionRight: 96,
+    navActionLeft: 10,
+    navActionTop: 6,
+    navActionSize: 32,
     /** 输入框上方横向推荐 */
     suggestions: FIXED_SUGGESTIONS.slice() as string[],
     /** 长按后弹出「复制」的消息 id */
@@ -171,6 +182,11 @@ Page({
     /** 按住说话态 */
     recording: false,
     micPressed: false,
+    /** 录音中居中遮罩（对齐记一笔） */
+    showRecordPanel: false,
+    recordDurationText: '00:00',
+    /** 键盘抬起量（已扣 tabBar）；整页不加系统顶推，只缩消息区 */
+    keyboardLift: 0,
   },
 
   /** 手指仍按住（处理 start 晚于抬手） */
@@ -180,23 +196,57 @@ Page({
   _tooShort: false as boolean,
   _recordAuthed: false as boolean,
   _recordStartedAt: 0 as number,
+  _durationTimer: 0 as number,
+  /** tabBar 占用高度；键盘高度含屏幕底，需扣掉才是页内抬升量 */
+  _tabBarOccupy: 0 as number,
 
   onLoad() {
     this.initCustomNav();
+    this.initTabBarOccupy();
     this.bindRecognition();
     this.loadHistory();
   },
 
   onShow() {
+    // WechatSI manager 全局单例，记一笔也会绑回调；回本页时抢回
+    this.bindRecognition();
     this.warmupRecordAuth();
   },
 
   onHide() {
     this.stopRecordingIfNeeded();
+    if (this.data.keyboardLift) {
+      this.setData({ keyboardLift: 0 });
+    }
   },
 
   onUnload() {
     this.stopRecordingIfNeeded();
+    this.clearDurationTimer();
+  },
+
+  /** 自定义导航下 windowHeight 一般已不含 tabBar */
+  initTabBarOccupy() {
+    try {
+      const win = wx.getWindowInfo();
+      const occupy = Math.max(0, (win.screenHeight || 0) - (win.windowHeight || 0));
+      this._tabBarOccupy = occupy || 50;
+    } catch (e) {
+      this._tabBarOccupy = 50;
+    }
+  },
+
+  /** 关掉 adjust-position 后，按键盘高度手动抬输入条（聊天页常规写法） */
+  onKeyboardHeightChange(e: { detail?: { height?: number } }) {
+    const h = (e.detail && e.detail.height) || 0;
+    const lift = h > 0 ? Math.max(0, h - this._tabBarOccupy) : 0;
+    if (lift === this.data.keyboardLift) {
+      if (lift > 0) this.scrollToBottom();
+      return;
+    }
+    this.setData({ keyboardLift: lift }, () => {
+      if (lift > 0) this.scrollToBottom();
+    });
   },
 
   /** 绑定同声传译回调（只填输入框，不自动发送） */
@@ -211,7 +261,12 @@ Page({
         return;
       }
       this._recordStartedAt = Date.now();
-      this.setData({ recording: true, micPressed: true });
+      this.setData({
+        recording: true,
+        micPressed: true,
+        showRecordPanel: true,
+      });
+      this.startDurationTimer();
     };
 
     recognitionManager.onStop = (res: { result?: string }) => {
@@ -241,16 +296,39 @@ Page({
     };
   },
 
-  /** 自定义顶栏尺寸，对齐系统胶囊按钮 */
+  clearDurationTimer() {
+    if (this._durationTimer) {
+      clearInterval(this._durationTimer);
+      this._durationTimer = 0;
+    }
+  },
+
+  startDurationTimer() {
+    this.clearDurationTimer();
+    this._durationTimer = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - this._recordStartedAt) / 1000);
+      this.setData({ recordDurationText: formatRecordDuration(elapsed) });
+    }, 1000) as unknown as number;
+  },
+
+  /** 自定义顶栏尺寸，左侧按钮与系统胶囊同高同边距 */
   initCustomNav() {
     try {
       const menu = wx.getMenuButtonBoundingClientRect();
       const statusBarHeight = getStatusBarHeight();
       const gap = menu.top - statusBarHeight;
       const navBarHeight = menu.height + gap * 2;
-      // 文案放在胶囊左侧，避免被遮挡
-      const navActionRight = Math.max(12, getWindowWidth() - menu.left + 8);
-      this.setData({ statusBarHeight, navBarHeight, navActionRight });
+      // 左边距与胶囊右边距对称；顶/高与胶囊齐平
+      const navActionLeft = Math.max(8, getWindowWidth() - menu.right);
+      const navActionTop = gap;
+      const navActionSize = menu.height;
+      this.setData({
+        statusBarHeight,
+        navBarHeight,
+        navActionLeft,
+        navActionTop,
+        navActionSize,
+      });
     } catch (e) {
       // 量不到就用默认，不影响对话本身
     }
@@ -480,13 +558,22 @@ Page({
     this._wantRecord = false;
     this._discardRecord = false;
     this._tooShort = false;
-    this.setData({ recording: false, micPressed: false });
+    this.clearDurationTimer();
+    this.setData({
+      recording: false,
+      micPressed: false,
+      showRecordPanel: false,
+      recordDurationText: '00:00',
+    });
   },
 
   stopRecordingIfNeeded() {
     this._wantRecord = false;
     this._discardRecord = true;
-    if (!this.data.recording && !this.data.micPressed) return;
+    this.clearDurationTimer();
+    const busy =
+      this.data.recording || this.data.showRecordPanel || this.data.micPressed;
+    if (!busy) return;
     if (this.data.recording) {
       try {
         recognitionManager.stop();
@@ -494,7 +581,11 @@ Page({
         this.resetRecordUiState();
         return;
       }
-      this.setData({ recording: false, micPressed: false });
+      this.setData({
+        recording: false,
+        micPressed: false,
+        showRecordPanel: false,
+      });
       return;
     }
     try {
@@ -576,13 +667,24 @@ Page({
     this._wantRecord = true;
     this._discardRecord = false;
     this._tooShort = false;
-    this.setData({ micPressed: true, copyMenuId: '' });
+    this.setData({
+      micPressed: true,
+      showRecordPanel: true,
+      recordDurationText: '00:00',
+      copyMenuId: '',
+    });
     this.ensureRecordAuth(() => this.beginRecognition());
   },
 
   onMicTouchEnd() {
     this._wantRecord = false;
-    if (!this.data.recording && !this.data.micPressed) return;
+    if (
+      !this.data.recording &&
+      !this.data.showRecordPanel &&
+      !this.data.micPressed
+    ) {
+      return;
+    }
 
     let shouldDiscard = false;
     if (this.data.recording) {

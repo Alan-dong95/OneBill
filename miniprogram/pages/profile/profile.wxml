@@ -57,12 +57,20 @@
       <text class="menu-text">意见反馈</text>
       <text class="menu-arrow">›</text>
     </view>
+    <view class="menu-item" hover-class="menu-hover" bindtap="goPrivacy">
+      <text class="menu-text">隐私政策</text>
+      <text class="menu-arrow">›</text>
+    </view>
     <view class="menu-item" hover-class="menu-hover" bindtap="goAbout">
       <text class="menu-text">关于韭菜保护本</text>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-item menu-item-last" hover-class="menu-hover" bindtap="onLogout">
+    <view class="menu-item" hover-class="menu-hover" bindtap="onLogout">
       <text class="menu-text menu-danger">退出登录</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item menu-item-last" hover-class="menu-hover" bindtap="onDeleteAccount">
+      <text class="menu-text menu-danger">注销账号</text>
       <text class="menu-arrow">›</text>
     </view>
   </view>

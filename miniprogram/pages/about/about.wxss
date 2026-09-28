@@ -51,6 +51,32 @@
   line-height: 1.6;
 }
 
+.link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 28rpx 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.link-hover {
+  background: #f3f7f4;
+}
+
+.link-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1a2e1f;
+}
+
+.link-arrow {
+  font-size: 36rpx;
+  color: #9aab9e;
+  line-height: 1;
+}
+
 .moods {
   display: flex;
   gap: 20rpx;

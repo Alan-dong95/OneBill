@@ -50,6 +50,8 @@ interface BillBrief {
 Page({
   data: {
     mode: 'ai' as 'ai' | 'manual',
+    /** 切换后内容淡入 class；首屏为空避免入场动画 */
+    modeEnter: '',
 
     aiText: '',
     aiParsing: false,
@@ -109,6 +111,9 @@ Page({
   },
 
   onShow() {
+    const ctx = this._voiceCtx();
+    // WechatSI manager 全局单例，问答页也会绑回调；回本页时抢回
+    bindVoiceHandlers(ctx);
     const today = toDateValue();
     this.setData({
       billDate: today,
@@ -117,7 +122,7 @@ Page({
     });
     this.updateCanSubmit();
     this.refreshRecentCategories();
-    warmupRecordAuth(this._voiceCtx());
+    warmupRecordAuth(ctx);
   },
 
   onHide() {
@@ -420,7 +425,8 @@ Page({
     if (mode !== 'ai' && mode !== 'manual') return;
     if (mode === this.data.mode) return;
     stopRecordingIfNeeded(this._voiceCtx());
-    this.setData({ mode });
+    this.setData({ mode, modeEnter: 'mode-panel-enter' });
+    this.vibrateOk();
   },
 
   updateCanSubmit() {

@@ -1,18 +1,25 @@
-<!-- 标准对话布局：消息区铺满可视区，输入条贴在 tabBar 上方 -->
-<view class="page" bindtap="onDismissCopy">
-  <!-- 自定义导航：原生栏无法加右侧文案，视觉对齐全局绿底白字 -->
+<!-- 标准对话布局：消息区铺满可视区，输入条贴在 tabBar 上方；键盘用 padding 抬输入条，不整页顶起 -->
+<view class="page" style="padding-bottom: {{keyboardLift}}px;" bindtap="onDismissCopy">
+  <!-- 自定义导航：左侧「新对话」图标，视觉对齐全局绿底白字 -->
   <view
     class="custom-nav"
     style="padding-top: {{statusBarHeight}}px;"
   >
     <view class="custom-nav-inner" style="height: {{navBarHeight}}px;">
-      <text class="custom-nav-title">问问小韭菜</text>
       <view
         class="custom-nav-action"
-        style="right: {{navActionRight}}px;"
+        style="left: {{navActionLeft}}px; top: {{navActionTop}}px; width: {{navActionSize}}px; height: {{navActionSize}}px;"
         hover-class="custom-nav-action-hover"
         catchtap="onNewChat"
-      >新对话</view>
+        aria-label="新对话"
+      >
+        <image
+          class="custom-nav-action-icon"
+          src="/images/icons/new-chat.svg"
+          mode="aspectFit"
+        />
+      </view>
+      <text class="custom-nav-title">问问小韭菜</text>
     </view>
   </view>
 
@@ -118,8 +125,9 @@
         disabled="{{sending || recording}}"
         auto-height
         show-confirm-bar="{{false}}"
-        adjust-position
+        adjust-position="{{false}}"
         hold-keyboard
+        bindkeyboardheightchange="onKeyboardHeightChange"
       />
 
       <view
@@ -127,6 +135,23 @@
         hover-class="composer-send-hover"
         catchtap="onSend"
       >发送</view>
+    </view>
+  </view>
+
+  <!-- 录音面板：按住时居中弹出；pointer-events 不抢麦克风触摸 -->
+  <view class="record-panel-mask" wx:if="{{showRecordPanel}}">
+    <view class="record-panel">
+      <view class="wave-bars">
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+      </view>
+      <text class="record-duration">{{recordDurationText}}</text>
+      <text class="record-tip">松手结束识别</text>
     </view>
   </view>
 </view>

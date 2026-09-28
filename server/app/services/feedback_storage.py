@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import logging
 import re
+import shutil
 import uuid
 from pathlib import Path
 
@@ -93,7 +94,39 @@ def save_feedback_images(user_id: int, images: list[str]) -> list[str]:
         except OSError as e:
             logger.exception("反馈截图写入失败 user_id=%s", user_id)
             raise HTTPException(status_code=500, detail="截图保存失败，稍后再试") from e
-        # StaticFiles 挂在 /uploads，URL 相对 upload_dir 根
+        # 鉴权下载走 GET /uploads/...，URL 相对 upload_dir 根
         rel = path.relative_to(root).as_posix()
         urls.append(f"/uploads/{rel}")
     return urls
+
+
+def delete_user_upload_dir(user_id: int) -> None:
+    """注销时删掉该用户反馈截图目录；不存在则静默跳过。"""
+    dest = resolve_upload_root() / "feedback" / str(user_id)
+    if dest.is_dir():
+        shutil.rmtree(dest, ignore_errors=True)
+
+
+def resolve_owned_upload_file(user_id: int, rel_path: str) -> Path:
+    """
+    把 URL 相对路径解析为磁盘文件；仅允许 feedback/{user_id}/ 下的文件。
+    防 path traversal：解析后必须仍落在用户目录内。
+    """
+    raw = (rel_path or "").strip().lstrip("/")
+    if not raw or ".." in raw.replace("\\", "/").split("/"):
+        raise HTTPException(status_code=404, detail="文件不存在")
+
+    # 兼容传入带或不带 feedback/ 前缀
+    prefix = f"feedback/{user_id}/"
+    if not raw.startswith(prefix):
+        raise HTTPException(status_code=403, detail="无权访问该文件")
+
+    root = resolve_upload_root().resolve()
+    full = (root / raw).resolve()
+    try:
+        full.relative_to(root / "feedback" / str(user_id))
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail="无权访问该文件") from e
+    if not full.is_file():
+        raise HTTPException(status_code=404, detail="文件不存在")
+    return full

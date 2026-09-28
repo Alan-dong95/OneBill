@@ -27,3 +27,9 @@ class UserUpdate(BaseModel):
 class LoginResponse(BaseModel):
     token: str
     user: UserOut
+
+
+class DeleteAccountOut(BaseModel):
+    """注销账号成功回执。"""
+
+    ok: bool = True

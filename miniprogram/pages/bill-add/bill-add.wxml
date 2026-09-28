@@ -1,21 +1,26 @@
 <view class="page {{mode === 'ai' ? 'page-ai' : ''}}">
-  <!-- 顶部模式切换：智能 / 手动 -->
+  <!-- 顶部模式切换：智能 / 手动（滑动胶囊） -->
   <view class="mode-switch">
+    <view class="mode-indicator {{mode === 'manual' ? 'on-manual' : ''}}"></view>
     <view
       class="mode-item {{mode === 'ai' ? 'active' : ''}}"
       data-mode="ai"
       bindtap="onModeChange"
+      hover-class="mode-item-hover"
+      hover-stay-time="60"
     >智能记</view>
     <view
       class="mode-item {{mode === 'manual' ? 'active' : ''}}"
       data-mode="manual"
       bindtap="onModeChange"
+      hover-class="mode-item-hover"
+      hover-stay-time="60"
     >手动记</view>
   </view>
 
   <!-- —— 智能记 —— -->
   <block wx:if="{{mode === 'ai'}}">
-    <view class="card ai-card">
+    <view class="card ai-card {{modeEnter}}">
       <view class="ai-title">说一句，菜菜帮你记</view>
       <textarea
         class="ai-textarea"
@@ -135,6 +140,7 @@
 
   <!-- —— 手动记 —— -->
   <block wx:else>
+    <view class="mode-manual-body {{modeEnter}}">
     <view class="amount-panel">
       <view class="amount-hint">花了多少</view>
       <view class="amount-input-wrap">
@@ -271,6 +277,7 @@
           bindinput="onDescInput"
         />
       </view>
+    </view>
     </view>
 
     <view class="submit-wrap safe-bottom">
