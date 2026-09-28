@@ -1,0 +1,25 @@
+<view class="page">
+  <view class="hero-card">
+    <image class="hero-mascot" src="{{mascot}}" mode="aspectFit" />
+    <view class="brand">韭菜保护本</view>
+    <view class="slogan">记账护身，少做一棵韭菜</view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">我们的吉祥物</view>
+    <view class="card-desc">
+      小韭菜抱着账本站岗：帮你看住每一笔花销。记好账，刀口浅一点，日子稳一点。
+    </view>
+  </view>
+
+  <view class="moods">
+    <view class="mood">
+      <image class="mood-img" src="{{mascotCelebrate}}" mode="aspectFit" />
+      <text class="mood-label">稳住啦</text>
+    </view>
+    <view class="mood">
+      <image class="mood-img" src="{{mascotFleeced}}" mode="aspectFit" />
+      <text class="mood-label">又被割了</text>
+    </view>
+  </view>
+</view>

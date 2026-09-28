@@ -1,0 +1,160 @@
+.page {
+  padding: 24rpx 32rpx calc(48rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  min-height: 100%;
+}
+
+.summary-card {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 36rpx 32rpx 28rpx;
+  margin-bottom: 24rpx;
+}
+
+.summary-title {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #1a2e1f;
+  line-height: 1.3;
+}
+
+.summary-hint {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #9aab9e;
+  line-height: 1.4;
+}
+
+.progress-wrap {
+  margin-top: 28rpx;
+}
+
+.progress-track {
+  height: 20rpx;
+  border-radius: 999rpx;
+  background: #e8f0ea;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  transition: width 0.25s ease;
+}
+
+.progress-meta {
+  margin-top: 12rpx;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.progress-pct {
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.nums {
+  margin-top: 32rpx;
+  display: flex;
+  align-items: stretch;
+}
+
+.num-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding: 0 8rpx;
+}
+
+.num-divider {
+  width: 1rpx;
+  background: #d8e3db;
+  align-self: stretch;
+}
+
+.num-value {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: #1a2e1f;
+  line-height: 1.2;
+}
+
+.num-danger {
+  color: #e74c3c;
+}
+
+.num-label {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #9aab9e;
+  font-weight: 600;
+}
+
+.card {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 36rpx 32rpx 32rpx;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #1a2e1f;
+  line-height: 1.3;
+}
+
+.card-hint {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #9aab9e;
+  line-height: 1.4;
+}
+
+.amount-wrap {
+  margin-top: 28rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+  height: 96rpx;
+  background: #f3f7f4;
+  border-radius: 20rpx;
+  border: 2rpx solid #d8e3db;
+  box-sizing: border-box;
+}
+
+.amount-yen {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: #1a2e1f;
+  margin-right: 8rpx;
+}
+
+.amount-input {
+  flex: 1;
+  min-width: 0;
+  height: 96rpx;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1a2e1f;
+}
+
+.amount-ph {
+  color: #9aab9e;
+  font-weight: 500;
+  font-size: 32rpx;
+}
+
+.amount-clear {
+  flex-shrink: 0;
+  margin-left: 12rpx;
+  font-size: 24rpx;
+  color: #9aab9e;
+  font-weight: 600;
+  padding: 8rpx 4rpx;
+}
+
+.save-btn {
+  margin-top: 28rpx;
+}

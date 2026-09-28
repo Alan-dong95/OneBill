@@ -1,0 +1,16 @@
+# 构建上下文排除项（避免把本机环境打进镜像）
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.env
+.env.*
+!.env.example
+*.md
+.git/
+.gitignore
+.DS_Store
+Thumbs.db

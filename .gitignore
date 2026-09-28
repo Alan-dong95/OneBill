@@ -1,0 +1,61 @@
+# ===== 环境与密钥（绝不要提交）=====
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# TLS 证书 / 私钥（含宝塔等下载的 *_nginx 目录）
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+*_nginx/
+
+# ===== Python =====
+server/.venv/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# ===== Node / 小程序 =====
+node_modules/
+miniprogram/node_modules/
+*.log
+npm-debug.log*
+
+# 微信开发者工具本机私有配置
+miniprogram/project.private.config.json
+
+# ===== IDE / 系统 / 本地工具 =====
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+.codegraph/
+
+# ===== 本地数据、临时文件、部署包 =====
+*.sqlite
+*.sqlite3
+*.db
+tmp/
+temp/
+.cache/
+uploads/
+server-deploy-*.zip
+*.zip

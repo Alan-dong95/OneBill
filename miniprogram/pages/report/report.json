@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "菜菜复盘",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "mp-html": "/components/mp-html/index"
+  }
+}

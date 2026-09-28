@@ -1,0 +1,40 @@
+---
+description: OneBill 全项目约定：技术栈、中文注释、LLM/密钥、改动边界
+alwaysApply: true
+---
+
+# 韭菜保护本 · OneBill 项目约定
+
+## 技术栈（优先复用，不另起炉灶）
+
+| 层 | 栈 |
+|----|-----|
+| 小程序 | 微信原生 + TypeScript、`utils/request`、ec-canvas、mp-html、WechatSI |
+| 后端 | FastAPI + SQLAlchemy + JWT、`server/app/routers` / `schemas` / `models` |
+| 数据库 | PostgreSQL + pgvector |
+| LLM | `.env` 的 `LLM_API_KEY` / `LLM_BASE_URL` / `LLM_MODEL`（OpenAI 兼容，如硅基流动千问） |
+| Embedding | `SILICONFLOW_*` + `EMBEDDING_MODEL` |
+
+- 先检索并复用同类实现；**仅当现有方案明确不够用**时再引入新库/新模式，并简要说明原因。
+- 禁止为「更优雅 / 更现代」替换已能工作的方案。
+
+## 语言与注释
+
+- 对用户的说明、代码注释、提交说明：使用**简体中文**；库名、API、类型名保留英文。
+- 注释只写「为什么」，不写逐行复述。
+- **默认保留**已有注释；不要顺手清理「看起来多余」的注释。
+
+## 改动范围
+
+- **最小改动**：只改当前任务需要的文件与逻辑；禁止顺带大重构、改无关模块。
+- 能局部修补就不做结构性重写；需要较大调整时先说明范围再动手。
+
+## 安全与配置
+
+- **禁止**把 `.env`、密钥、微信 Secret、JWT、证书私钥提交进 git 或写进回复正文。
+- 对话 LLM 统一走 `services.llm` 的 `get_llm_client()` / `get_llm_model()`，不要再写死 DeepSeek 地址或 `deepseek-chat`。
+- 时间与「当月/当年」统计对齐**东八区**（后端 `CN_TZ` / `Asia/Shanghai`）。
+
+## 产品语气（文案）
+
+- 用户可见文案可带「韭菜保护协会」口吻：短句、有梗、不鸡汤；不要忽然换成官方客服腔。

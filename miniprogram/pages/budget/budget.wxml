@@ -1,0 +1,67 @@
+<view class="page">
+  <!-- 进度总览 -->
+  <view class="summary-card">
+    <view class="summary-title">本月预算进度</view>
+    <view class="summary-hint" wx:if="{{!hasBudget && !loading}}">还没设预算，协会没法催你收手</view>
+
+    <view class="progress-wrap" wx:if="{{hasBudget}}">
+      <view class="progress-track">
+        <view
+          class="progress-fill"
+          style="width: {{progressWidth}}%; background: {{progressColor}};"
+        ></view>
+      </view>
+      <view class="progress-meta">
+        <text class="progress-pct" style="color: {{progressColor}};">已花 {{percentText}}%</text>
+      </view>
+    </view>
+
+    <view class="nums">
+      <view class="num-cell">
+        <view class="num-value">¥{{budgetText}}</view>
+        <view class="num-label">当前预算</view>
+      </view>
+      <view class="num-divider"></view>
+      <view class="num-cell">
+        <view class="num-value">¥{{spentText}}</view>
+        <view class="num-label">已花金额</view>
+      </view>
+      <view class="num-divider"></view>
+      <view class="num-cell">
+        <view class="num-value {{remainingNegative ? 'num-danger' : ''}}">
+          {{remainingNegative ? '-' : ''}}¥{{remainingText}}
+        </view>
+        <view class="num-label">{{remainingNegative ? '已超支' : '剩余金额'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设置 -->
+  <view class="card">
+    <view class="card-title">设置本月预算</view>
+    <view class="card-hint">填 0 或清空再保存 = 不设预算，首页不提醒</view>
+
+    <view class="amount-wrap">
+      <text class="amount-yen">¥</text>
+      <input
+        class="amount-input"
+        type="digit"
+        placeholder="比如 3000"
+        placeholder-class="amount-ph"
+        value="{{draft}}"
+        bindinput="onAmountInput"
+        confirm-type="done"
+        bindconfirm="onSave"
+      />
+      <text class="amount-clear" wx:if="{{draft}}" bindtap="onClear">清空</text>
+    </view>
+
+    <button
+      class="btn-primary btn-block save-btn"
+      hover-class="btn-hover"
+      loading="{{saving}}"
+      disabled="{{saving || loading}}"
+      bindtap="onSave"
+    >保存预算</button>
+  </view>
+</view>

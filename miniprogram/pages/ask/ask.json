@@ -1,0 +1,11 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "问问小韭菜",
+  "navigationBarBackgroundColor": "#1a2e1f",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f3f7f4",
+  "disableScroll": true,
+  "usingComponents": {
+    "mp-html": "/components/mp-html/index"
+  }
+}

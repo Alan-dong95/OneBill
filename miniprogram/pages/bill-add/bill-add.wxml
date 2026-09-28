@@ -1,0 +1,318 @@
+<view class="page {{mode === 'ai' ? 'page-ai' : ''}}">
+  <!-- 顶部模式切换：智能 / 手动 -->
+  <view class="mode-switch">
+    <view
+      class="mode-item {{mode === 'ai' ? 'active' : ''}}"
+      data-mode="ai"
+      bindtap="onModeChange"
+    >智能记</view>
+    <view
+      class="mode-item {{mode === 'manual' ? 'active' : ''}}"
+      data-mode="manual"
+      bindtap="onModeChange"
+    >手动记</view>
+  </view>
+
+  <!-- —— 智能记 —— -->
+  <block wx:if="{{mode === 'ai'}}">
+    <view class="card ai-card">
+      <view class="ai-title">说一句，菜菜帮你记</view>
+      <textarea
+        class="ai-textarea"
+        placeholder="比如：今天午饭25，打车18，超市买菜62.5；也可以一次说多笔"
+        placeholder-class="ai-ph"
+        value="{{aiText}}"
+        maxlength="500"
+        auto-height
+        bindinput="onAiTextInput"
+      />
+
+      <view class="ai-actions">
+        <button
+          class="btn-primary ai-parse-btn"
+          bindtap="onAiParse"
+          loading="{{aiParsing}}"
+          disabled="{{aiParsing || recording}}"
+        >智能解析</button>
+      </view>
+
+      <view class="ai-result" id="ai-result-anchor" wx:if="{{aiResultCount > 0}}">
+        <view class="ai-result-header">
+          <text class="ai-result-label">解析结果 · {{aiResultCount}} 笔</text>
+          <text class="ai-result-total">合计 ¥{{aiTotalAmountText}}</text>
+        </view>
+
+        <view class="ai-item" wx:for="{{aiResults}}" wx:key="index">
+          <view class="ai-item-top">
+            <text class="ai-item-amount">¥{{item.amountText}}</text>
+            <view class="ai-item-actions">
+              <text class="ai-item-cat">{{item.category}}</text>
+              <text
+                class="ai-item-save {{item.saving || aiSavingAll ? 'disabled' : ''}}"
+                data-index="{{index}}"
+                catchtap="onAiSaveOneItem"
+              >{{item.saving ? '保存中' : '保存'}}</text>
+              <text
+                class="ai-item-remove {{item.saving || aiSavingAll ? 'disabled' : ''}}"
+                data-index="{{index}}"
+                catchtap="onAiRemoveItem"
+              >删除</text>
+            </view>
+          </view>
+          <view class="ai-item-desc">{{item.description || '—'}}</view>
+          <!-- 日期 / 时段或钟点均可点选改；改钟点后清掉推断时段 -->
+          <view class="ai-item-time-row">
+            <picker
+              mode="date"
+              value="{{item.dateValue}}"
+              data-index="{{index}}"
+              bindchange="onAiDateChange"
+              disabled="{{item.saving || aiSavingAll}}"
+            >
+              <view class="ai-item-time-chip">{{item.timeText}}</view>
+            </picker>
+            <picker
+              mode="time"
+              value="{{item.timeValue}}"
+              data-index="{{index}}"
+              bindchange="onAiTimeChange"
+              disabled="{{item.saving || aiSavingAll}}"
+            >
+              <view class="ai-item-time-chip muted">{{item.has_exact_time ? '改时间' : '改成具体时间'}}</view>
+            </picker>
+          </view>
+        </view>
+
+        <view class="ai-bulk-actions" wx:if="{{aiResultCount > 1}}">
+          <button
+            class="btn-ghost ai-cancel-btn"
+            bindtap="onAiCancel"
+            disabled="{{aiSavingAll}}"
+          >取消</button>
+          <button
+            class="btn-primary ai-save-all-btn"
+            bindtap="onAiSaveAll"
+            loading="{{aiSavingAll}}"
+            disabled="{{aiSavingAll}}"
+          >保存剩余全部（{{aiResultCount}} 笔）</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部：相机 + 麦克风（等大等间距） -->
+    <view class="voice-dock safe-bottom">
+      <view class="voice-dock-row">
+        <view class="voice-dock-item {{aiParsing || recording || micPressed ? 'disabled' : ''}}">
+          <view class="voice-cam" catchtap="onOcrTap">
+            <view class="cam-glyph">
+              <view class="cam-body"></view>
+              <view class="cam-lens"></view>
+              <view class="cam-flash"></view>
+            </view>
+          </view>
+          <text class="voice-dock-label">拍小票</text>
+        </view>
+        <view
+          class="voice-dock-item voice-mic-hit {{aiParsing ? 'disabled' : ''}}"
+          catchtouchstart="onRecordTouchStart"
+          catchtouchmove="onRecordTouchMove"
+          catchtouchend="onRecordTouchEnd"
+          catchtouchcancel="onRecordTouchEnd"
+        >
+          <view class="voice-mic {{micPressed || recording ? 'active' : ''}} {{recordCancel ? 'cancel' : ''}}">
+            <view class="voice-mic-glyph">
+              <view class="mic-capsule"></view>
+              <view class="mic-arc"></view>
+              <view class="mic-stem"></view>
+              <view class="mic-base"></view>
+            </view>
+          </view>
+          <text class="voice-dock-label">{{micPressed || recording ? (recordCancel ? '松开取消' : '松开发送') : '按住说话'}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- —— 手动记 —— -->
+  <block wx:else>
+    <view class="amount-panel">
+      <view class="amount-hint">花了多少</view>
+      <view class="amount-input-wrap">
+        <text class="currency">¥</text>
+        <input
+          class="amount-input"
+          type="digit"
+          placeholder="0.00"
+          placeholder-class="amount-ph"
+          value="{{amount}}"
+          focus="{{false}}"
+          bindinput="onAmountInput"
+        />
+      </view>
+
+      <view class="quick-amounts">
+        <view
+          class="quick-amount-btn"
+          wx:for="{{quickAmounts}}"
+          wx:key="*this"
+          data-amount="{{item}}"
+          bindtap="onQuickAmountTap"
+          hover-class="quick-amount-hover"
+        >¥{{item}}</view>
+      </view>
+    </view>
+
+    <view class="card">
+      <!-- 最近使用：从历史账单取最近 3 个分类 -->
+      <block wx:if="{{recentCategories.length > 0}}">
+        <view class="section-label">最近使用</view>
+        <view class="recent-row">
+          <view
+            class="category-item recent-item {{selectedCategory === item.name ? 'active' : ''}}"
+            wx:for="{{recentCategories}}"
+            wx:key="name"
+            data-cat="{{item.name}}"
+            bindtap="onCategoryTap"
+          >
+            <text class="cat-icon">{{item.icon}}</text>
+            <text class="cat-name">{{item.name}}</text>
+          </view>
+        </view>
+        <view class="section-gap"></view>
+      </block>
+
+      <view class="section-label">分类</view>
+      <view class="category-grid">
+        <view
+          class="category-item {{selectedCategory === item.name ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="name"
+          data-cat="{{item.name}}"
+          bindtap="onCategoryTap"
+        >
+          <text class="cat-icon">{{item.icon}}</text>
+          <text class="cat-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="field-row">
+        <text class="field-label">日期</text>
+        <picker mode="date" value="{{billDate}}" bindchange="onDateChange">
+          <view class="field-value">
+            <text>{{billDate}}</text>
+            <text class="field-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+      <view class="field-divider"></view>
+      <view class="field-row">
+        <text class="field-label">重复记账</text>
+        <switch
+          class="field-switch"
+          checked="{{isRecurring}}"
+          color="#27ae60"
+          bindchange="onRecurringSwitch"
+        />
+      </view>
+      <block wx:if="{{isRecurring}}">
+        <view class="field-divider"></view>
+        <view class="recurring-type-row">
+          <view
+            class="recurring-type-btn {{recurringType === 'monthly' ? 'active' : ''}}"
+            data-type="monthly"
+            bindtap="onRecurringTypeTap"
+          >每月</view>
+          <view
+            class="recurring-type-btn {{recurringType === 'weekly' ? 'active' : ''}}"
+            data-type="weekly"
+            bindtap="onRecurringTypeTap"
+          >每周</view>
+        </view>
+        <view class="field-row" wx:if="{{recurringType === 'monthly'}}">
+          <text class="field-label">每月几号</text>
+          <picker
+            mode="selector"
+            range="{{monthDayLabels}}"
+            value="{{monthDayIndex}}"
+            bindchange="onMonthDayChange"
+          >
+            <view class="field-value">
+              <text>{{monthDayLabels[monthDayIndex]}}</text>
+              <text class="field-arrow">›</text>
+            </view>
+          </picker>
+        </view>
+        <view class="field-row" wx:else>
+          <text class="field-label">星期几</text>
+          <picker
+            mode="selector"
+            range="{{weekdayLabels}}"
+            value="{{weekdayIndex}}"
+            bindchange="onWeekdayChange"
+          >
+            <view class="field-value">
+              <text>{{weekdayLabels[weekdayIndex]}}</text>
+              <text class="field-arrow">›</text>
+            </view>
+          </picker>
+        </view>
+      </block>
+      <view class="field-divider"></view>
+      <view class="field-col">
+        <text class="field-label">备注</text>
+        <input
+          class="desc-input"
+          placeholder="买了什么？（可选）"
+          placeholder-class="desc-ph"
+          value="{{description}}"
+          maxlength="60"
+          bindinput="onDescInput"
+        />
+      </view>
+    </view>
+
+    <view class="submit-wrap safe-bottom">
+      <button
+        class="btn-primary btn-block submit-btn"
+        bindtap="submit"
+        loading="{{submitting}}"
+        disabled="{{!canSubmit}}"
+      >保存这一笔</button>
+    </view>
+  </block>
+
+  <!-- 录音面板：按住时居中弹出；pointer-events 不抢触摸 -->
+  <view class="record-panel-mask" wx:if="{{showRecordPanel}}">
+    <view class="record-panel {{recordCancel ? 'cancel' : ''}}">
+      <view class="wave-bars">
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+        <view class="wave-bar"></view>
+      </view>
+      <text class="record-duration">{{recordDurationText}}</text>
+      <text class="record-tip">{{recordCancel ? '松开取消' : '上滑取消'}}</text>
+    </view>
+  </view>
+
+  <!-- 记账成功：眨眼比耶庆祝 -->
+  <view class="mascot-toast-mask" wx:if="{{showCelebrateToast}}">
+    <view class="mascot-toast">
+      <image class="mascot-toast-img" src="{{mascotCelebrate}}" mode="aspectFit" />
+      <view class="mascot-toast-title">{{celebrateToastTitle}}</view>
+    </view>
+  </view>
+
+  <!-- 识票 loading：白卡片 + 绿转圈，无黑色遮罩 -->
+  <view class="ocr-loading-mask" wx:if="{{showOcrLoading}}">
+    <view class="ocr-loading-card">
+      <view class="ocr-spinner"></view>
+      <text class="ocr-loading-text">识票中...</text>
+    </view>
+  </view>
+</view>

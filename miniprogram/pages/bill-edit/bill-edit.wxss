@@ -1,0 +1,6 @@
+/* 与手动记表单保持同一套视觉 */
+@import "../bill-add/bill-add.wxss";
+
+.page {
+  padding: 24rpx 32rpx 220rpx;
+}

@@ -1,0 +1,94 @@
+<view class="page">
+  <view class="amount-panel">
+    <view class="amount-hint">花了多少</view>
+    <view class="amount-input-wrap">
+      <text class="currency">¥</text>
+      <input
+        class="amount-input"
+        type="digit"
+        placeholder="0.00"
+        placeholder-class="amount-ph"
+        value="{{amount}}"
+        focus="{{false}}"
+        bindinput="onAmountInput"
+      />
+    </view>
+
+    <view class="quick-amounts">
+      <view
+        class="quick-amount-btn"
+        wx:for="{{quickAmounts}}"
+        wx:key="*this"
+        data-amount="{{item}}"
+        bindtap="onQuickAmountTap"
+        hover-class="quick-amount-hover"
+      >¥{{item}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <block wx:if="{{recentCategories.length > 0}}">
+      <view class="section-label">最近使用</view>
+      <view class="recent-row">
+        <view
+          class="category-item recent-item {{selectedCategory === item.name ? 'active' : ''}}"
+          wx:for="{{recentCategories}}"
+          wx:key="name"
+          data-cat="{{item.name}}"
+          bindtap="onCategoryTap"
+        >
+          <text class="cat-icon">{{item.icon}}</text>
+          <text class="cat-name">{{item.name}}</text>
+        </view>
+      </view>
+      <view class="section-gap"></view>
+    </block>
+
+    <view class="section-label">分类</view>
+    <view class="category-grid">
+      <view
+        class="category-item {{selectedCategory === item.name ? 'active' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="name"
+        data-cat="{{item.name}}"
+        bindtap="onCategoryTap"
+      >
+        <text class="cat-icon">{{item.icon}}</text>
+        <text class="cat-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="field-row">
+      <text class="field-label">日期</text>
+      <picker mode="date" value="{{billDate}}" bindchange="onDateChange">
+        <view class="field-value">
+          <text>{{billDate}}</text>
+          <text class="field-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    <view class="field-divider"></view>
+    <view class="field-col">
+      <text class="field-label">备注</text>
+      <input
+        class="desc-input"
+        placeholder="买了什么？（可选）"
+        placeholder-class="desc-ph"
+        value="{{description}}"
+        maxlength="60"
+        bindinput="onDescInput"
+      />
+    </view>
+  </view>
+
+  <view class="submit-wrap safe-bottom">
+    <button
+      class="btn-primary btn-block submit-btn"
+      bindtap="submit"
+      loading="{{submitting}}"
+      disabled="{{!canSubmit}}"
+    >保存修改</button>
+  </view>
+</view>

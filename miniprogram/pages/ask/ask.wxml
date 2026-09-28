@@ -1,0 +1,132 @@
+<!-- 标准对话布局：消息区铺满可视区，输入条贴在 tabBar 上方 -->
+<view class="page" bindtap="onDismissCopy">
+  <!-- 自定义导航：原生栏无法加右侧文案，视觉对齐全局绿底白字 -->
+  <view
+    class="custom-nav"
+    style="padding-top: {{statusBarHeight}}px;"
+  >
+    <view class="custom-nav-inner" style="height: {{navBarHeight}}px;">
+      <text class="custom-nav-title">问问小韭菜</text>
+      <view
+        class="custom-nav-action"
+        style="right: {{navActionRight}}px;"
+        hover-class="custom-nav-action-hover"
+        catchtap="onNewChat"
+      >新对话</view>
+    </view>
+  </view>
+
+  <scroll-view
+    class="chat-list"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+    scroll-with-animation
+    scroll-into-view="{{scrollIntoView}}"
+  >
+    <view class="chat-inner">
+      <view
+        wx:for="{{messages}}"
+        wx:key="id"
+        id="msg-{{item.id}}"
+        class="msg-row {{item.role === 'user' ? 'is-user' : 'is-ai'}}"
+      >
+        <view class="msg-col">
+          <text class="msg-time" wx:if="{{item.time}}">{{item.time}}</text>
+
+          <!-- 用户：纯文字绿色气泡 -->
+          <view class="bubble bubble-user" wx:if="{{item.role === 'user'}}">
+            <text class="bubble-text">{{item.content}}</text>
+          </view>
+
+          <!-- AI：长按弹出复制；加载态用跳动发芽 emoji -->
+          <view
+            class="bubble bubble-ai {{item.loading ? 'is-loading' : ''}}"
+            wx:else
+            catchlongpress="onAiLongPress"
+            data-id="{{item.id}}"
+          >
+            <view
+              class="copy-tip"
+              wx:if="{{copyMenuId === item.id}}"
+              catchtap="onCopyAnswer"
+              data-content="{{item.content}}"
+            >复制</view>
+            <text wx:if="{{item.loading}}" class="loading-sprout">🌱</text>
+            <text class="bubble-text" wx:elif="{{item.plain}}">{{item.content}}</text>
+            <mp-html
+              wx:else
+              content="{{item.html}}"
+              tag-style="{{aiTagStyle}}"
+              container-style="{{aiContainerStyle}}"
+              data-id="{{item.id}}"
+              bind:error="onMdError"
+            />
+          </view>
+        </view>
+      </view>
+      <view id="msg-bottom" class="chat-end"></view>
+    </view>
+  </scroll-view>
+
+  <view class="composer" catchtap="onDismissCopy">
+    <!-- 推荐问题：输入框上方横向滚动 -->
+    <scroll-view
+      class="suggest-scroll"
+      scroll-x
+      enhanced
+      show-scrollbar="{{false}}"
+      enable-flex
+    >
+      <view class="suggest-row">
+        <view
+          wx:for="{{suggestions}}"
+          wx:key="*this"
+          class="suggest-chip {{sending ? 'is-disabled' : ''}}"
+          hover-class="suggest-chip-hover"
+          data-q="{{item}}"
+          catchtap="onTapSuggestion"
+        >{{item}}</view>
+      </view>
+    </scroll-view>
+
+    <view class="composer-bar">
+      <!-- 左侧麦克风：按住说话 → 同声传译填入输入框 -->
+      <view
+        class="composer-mic {{micPressed || recording ? 'is-active' : ''}} {{sending ? 'is-disabled' : ''}}"
+        catchtouchstart="onMicTouchStart"
+        catchtouchend="onMicTouchEnd"
+        catchtouchcancel="onMicTouchCancel"
+      >
+        <view class="mic-glyph">
+          <view class="mic-capsule"></view>
+          <view class="mic-arc"></view>
+          <view class="mic-stem"></view>
+          <view class="mic-base"></view>
+        </view>
+      </view>
+
+      <textarea
+        class="composer-input"
+        maxlength="100"
+        placeholder="{{recording || micPressed ? '松手结束识别…' : '想问啥，跟小韭菜说'}}"
+        placeholder-class="composer-placeholder"
+        value="{{inputValue}}"
+        bindinput="onInput"
+        confirm-type="send"
+        bindconfirm="onSend"
+        disabled="{{sending || recording}}"
+        auto-height
+        show-confirm-bar="{{false}}"
+        adjust-position
+        hold-keyboard
+      />
+
+      <view
+        class="composer-send {{sending || !inputValue ? 'is-disabled' : ''}}"
+        hover-class="composer-send-hover"
+        catchtap="onSend"
+      >发送</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,79 @@
+.page {
+  padding: 24rpx 32rpx 64rpx;
+}
+
+.hero-card {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 40rpx 32rpx 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24rpx;
+}
+
+.hero-mascot {
+  width: 360rpx;
+  height: 360rpx;
+}
+
+.brand {
+  margin-top: 12rpx;
+  font-size: 40rpx;
+  font-weight: 800;
+  color: #1a2e1f;
+}
+
+.slogan {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #5a6b5e;
+}
+
+.card {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+}
+
+.card-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1a2e1f;
+}
+
+.card-desc {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #5a6b5e;
+  line-height: 1.6;
+}
+
+.moods {
+  display: flex;
+  gap: 20rpx;
+}
+
+.mood {
+  flex: 1;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mood-img {
+  width: 180rpx;
+  height: 180rpx;
+}
+
+.mood-label {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #5a6b5e;
+  font-weight: 600;
+}

@@ -1,0 +1,4 @@
+{
+  "desc": "韭菜保护本",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

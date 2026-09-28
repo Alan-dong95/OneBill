@@ -1,0 +1,94 @@
+<view class="page">
+  <!-- 用户信息：头像随成就变；一行昵称 + 一行称号 -->
+  <view class="user-card">
+    <image class="user-avatar" src="{{mascotSrc}}" mode="aspectFit" />
+    <view class="user-info">
+      <view class="user-name">{{nickname}}</view>
+      <view class="user-title">{{title}}</view>
+      <view class="user-meta">已记账{{memberDays}}天</view>
+    </view>
+  </view>
+
+  <!-- 数据小条：横排三个数字 -->
+  <view class="stats-row">
+    <view class="stat-cell">
+      <view class="stat-value">{{monthTotalText}}</view>
+      <view class="stat-label">本月支出</view>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-cell">
+      <view class="stat-value">{{monthCount}}</view>
+      <view class="stat-label">记账笔数</view>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-cell">
+      <view class="stat-value">{{streakDays}}</view>
+      <view class="stat-label">连续记账</view>
+    </view>
+  </view>
+
+  <!-- 成就标签 -->
+  <view class="badge-card">
+    <view class="badge-label">本月成就</view>
+    <view class="badge-pill">{{badge}}</view>
+    <view class="badge-hint" wx:if="{{badgeHint}}">{{badgeHint}}</view>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="menu-card">
+    <view class="menu-item" hover-class="menu-hover" bindtap="onEditNickname">
+      <text class="menu-text">修改昵称</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" hover-class="menu-hover" bindtap="onExport">
+      <text class="menu-text">导出账单CSV</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" hover-class="menu-hover" bindtap="onBudget">
+      <text class="menu-text">月度预算</text>
+      <text class="menu-tag">{{budgetLabel}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" hover-class="menu-hover" bindtap="onRecurring">
+      <text class="menu-text">周期账单管理</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" hover-class="menu-hover" bindtap="goFeedback">
+      <text class="menu-text">意见反馈</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" hover-class="menu-hover" bindtap="goAbout">
+      <text class="menu-text">关于韭菜保护本</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item menu-item-last" hover-class="menu-hover" bindtap="onLogout">
+      <text class="menu-text menu-danger">退出登录</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="version">v1.0.0</view>
+
+  <!-- 修改昵称弹窗 -->
+  <view class="modal-mask" wx:if="{{showNickModal}}" catchtouchmove="noop">
+    <view class="modal-panel">
+      <view class="modal-title">改个昵称</view>
+      <view class="modal-desc">协会通讯录要换人了？</view>
+      <input
+        class="modal-input"
+        maxlength="32"
+        focus="{{showNickModal}}"
+        value="{{nickDraft}}"
+        placeholder="小韭菜"
+        placeholder-class="modal-placeholder"
+        bindinput="onNickInput"
+        confirm-type="done"
+        bindconfirm="onSaveNickname"
+      />
+      <view class="modal-actions">
+        <button class="btn-ghost modal-btn" hover-class="btn-hover-ghost" bindtap="onCloseNickModal">取消</button>
+        <button class="btn-primary modal-btn" hover-class="btn-hover" loading="{{savingNick}}" bindtap="onSaveNickname">保存</button>
+      </view>
+    </view>
+  </view>
+</view>

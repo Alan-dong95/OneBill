@@ -1,0 +1,48 @@
+{
+  "description": "韭菜保护本 - AI 记账小程序",
+  "appid": "wx7e68416bb4d0d50e",
+  "compileType": "miniprogram",
+  "libVersion": "latest",
+  "projectname": "jiucai-protect",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": false,
+    "ignoreUploadUnusedFiles": true,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": [
+      "typescript"
+    ],
+    "condition": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [
+      { "type": "folder", "value": "node_modules" },
+      { "type": "folder", "value": "typings" },
+      { "type": "folder", "value": "scripts" },
+      { "type": "file", "value": "package-lock.json" },
+      { "type": "file", "value": "package.json" },
+      { "type": "file", "value": "tsconfig.json" },
+      { "type": "file", "value": "components/ec-canvas/_echarts-entry.js" },
+      { "type": "file", "value": "components/ec-canvas/build-echarts.js" }
+    ],
+    "include": []
+  },
+  "editorSetting": {}
+}

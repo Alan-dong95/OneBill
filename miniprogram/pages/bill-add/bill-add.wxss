@@ -1,0 +1,800 @@
+.page {
+  padding: 24rpx 32rpx 220rpx;
+}
+
+/* 智能记：给底部大麦留空 */
+.page-ai {
+  padding-bottom: 280rpx;
+}
+
+/* —— 顶部模式切换 —— */
+.mode-switch {
+  display: flex;
+  padding: 6rpx;
+  margin-bottom: 24rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  box-sizing: border-box;
+}
+
+.mode-item {
+  flex: 1;
+  height: 72rpx;
+  line-height: 72rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #5a6b5e;
+  border-radius: 16rpx;
+}
+
+.mode-item.active {
+  background: #2ecc71;
+  color: #fff;
+}
+
+/* —— AI 快速记 —— */
+.ai-card {
+  padding-bottom: 28rpx;
+}
+
+.ai-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1a2e1f;
+  margin-bottom: 20rpx;
+}
+
+.ai-textarea {
+  width: 100%;
+  min-height: 280rpx;
+  box-sizing: border-box;
+  padding: 28rpx 28rpx;
+  background: #f3f7f4;
+  border-radius: 20rpx;
+  font-size: 30rpx;
+  color: #1a2e1f;
+  line-height: 1.65;
+}
+
+.ai-ph {
+  color: #b5c4b8;
+}
+
+.ai-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 24rpx;
+}
+
+.ai-parse-btn {
+  flex: 1;
+  margin: 0;
+  height: 80rpx;
+  line-height: 76rpx;
+  font-size: 28rpx;
+}
+
+/* —— 底部：相机 + 麦克风（等大等间距） —— */
+.voice-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8rpx 32rpx calc(8rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(243, 247, 244, 0), #f3f7f4 40%);
+  box-sizing: border-box;
+}
+
+.voice-dock-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 96rpx;
+  width: 100%;
+  max-width: 560rpx;
+}
+
+.voice-dock-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.voice-dock-item.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* 热区略大于可视圆，好按、上滑不易丢触摸 */
+.voice-mic-hit {
+  min-width: 140rpx;
+  padding: 0 20rpx;
+  box-sizing: content-box;
+}
+
+/* 相机：白底 + 绿图标 */
+.voice-cam {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 6rpx 20rpx rgba(39, 174, 96, 0.18);
+}
+
+.cam-glyph {
+  position: relative;
+  width: 40rpx;
+  height: 30rpx;
+  pointer-events: none;
+}
+
+.cam-body {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40rpx;
+  height: 26rpx;
+  border-radius: 6rpx;
+  background: #27ae60;
+}
+
+.cam-lens {
+  position: absolute;
+  left: 50%;
+  bottom: 5rpx;
+  width: 14rpx;
+  height: 14rpx;
+  margin-left: -7rpx;
+  border-radius: 50%;
+  border: 3rpx solid #fff;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+.cam-flash {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 14rpx;
+  height: 8rpx;
+  margin-left: -7rpx;
+  border-radius: 3rpx 3rpx 0 0;
+  background: #27ae60;
+}
+
+/* 麦克风：绿底 + 白图标 */
+.voice-mic {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: #27ae60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 20rpx rgba(39, 174, 96, 0.32);
+  /* 按下变色要快，取消态几乎瞬切 */
+  transition: background 0.06s linear, transform 0.06s linear, box-shadow 0.06s linear;
+}
+
+.voice-mic.active {
+  background: #219150;
+  transform: scale(1.06);
+  box-shadow: 0 8rpx 24rpx rgba(39, 174, 96, 0.45);
+}
+
+.voice-mic.cancel {
+  background: #e74c3c;
+  box-shadow: 0 8rpx 24rpx rgba(231, 76, 60, 0.4);
+}
+
+.voice-mic-glyph {
+  position: relative;
+  width: 36rpx;
+  height: 48rpx;
+  pointer-events: none;
+}
+
+.mic-capsule {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 18rpx;
+  height: 28rpx;
+  margin-left: -9rpx;
+  border-radius: 9rpx;
+  background: #fff;
+}
+
+.mic-arc {
+  position: absolute;
+  left: 50%;
+  top: 8rpx;
+  width: 30rpx;
+  height: 24rpx;
+  margin-left: -15rpx;
+  border: 3rpx solid #fff;
+  border-top: none;
+  border-radius: 0 0 16rpx 16rpx;
+  box-sizing: border-box;
+}
+
+.mic-stem {
+  position: absolute;
+  left: 50%;
+  bottom: 5rpx;
+  width: 3rpx;
+  height: 10rpx;
+  margin-left: -1.5rpx;
+  background: #fff;
+}
+
+.mic-base {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 18rpx;
+  height: 3rpx;
+  margin-left: -9rpx;
+  border-radius: 2rpx;
+  background: #fff;
+}
+
+.voice-dock-label {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #5a6b5e;
+  line-height: 1.2;
+  text-align: center;
+}
+
+/* —— 识票 loading（白卡片，无黑底） —— */
+.ocr-loading-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.ocr-loading-card {
+  min-width: 220rpx;
+  padding: 40rpx 48rpx 36rpx;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 12rpx 40rpx rgba(26, 46, 31, 0.14);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ocr-spinner {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  border: 6rpx solid #e8f8ee;
+  border-top-color: #27ae60;
+  box-sizing: border-box;
+  animation: ocr-spin 0.75s linear infinite;
+}
+
+.ocr-loading-text {
+  margin-top: 24rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #5a6b5e;
+  line-height: 1.2;
+}
+
+@keyframes ocr-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* —— 居中录音面板 —— */
+.record-panel-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 不拦截触摸，松手/上滑仍由底部麦接收 */
+  pointer-events: none;
+  background: rgba(26, 46, 31, 0.28);
+}
+
+.record-panel {
+  width: 360rpx;
+  padding: 40rpx 32rpx 36rpx;
+  box-sizing: border-box;
+  border-radius: 28rpx;
+  background: #1a2e1f;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background 0.06s linear;
+}
+
+.record-panel.cancel {
+  background: #c0392b;
+}
+
+.wave-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10rpx;
+  height: 88rpx;
+}
+
+.wave-bar {
+  width: 10rpx;
+  height: 24rpx;
+  border-radius: 6rpx;
+  background: #2ecc71;
+  transform-origin: center bottom;
+  animation: wave-pulse 0.7s ease-in-out infinite alternate;
+}
+
+.wave-bar:nth-child(1) {
+  animation-duration: 0.55s;
+  animation-delay: 0s;
+}
+.wave-bar:nth-child(2) {
+  animation-duration: 0.65s;
+  animation-delay: 0.08s;
+}
+.wave-bar:nth-child(3) {
+  animation-duration: 0.5s;
+  animation-delay: 0.16s;
+}
+.wave-bar:nth-child(4) {
+  animation-duration: 0.72s;
+  animation-delay: 0.04s;
+}
+.wave-bar:nth-child(5) {
+  animation-duration: 0.58s;
+  animation-delay: 0.12s;
+}
+.wave-bar:nth-child(6) {
+  animation-duration: 0.68s;
+  animation-delay: 0.2s;
+}
+.wave-bar:nth-child(7) {
+  animation-duration: 0.52s;
+  animation-delay: 0.1s;
+}
+
+.record-panel.cancel .wave-bar {
+  background: rgba(255, 255, 255, 0.85);
+  animation-play-state: paused;
+  height: 20rpx;
+}
+
+@keyframes wave-pulse {
+  0% {
+    height: 18rpx;
+  }
+  100% {
+    height: 72rpx;
+  }
+}
+
+.record-duration {
+  margin-top: 20rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 2rpx;
+  font-variant-numeric: tabular-nums;
+}
+
+.record-tip {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.ai-result {
+  margin-top: 28rpx;
+  padding: 24rpx;
+  background: #e8f8ee;
+  border-radius: 20rpx;
+  border: 2rpx solid #2ecc71;
+}
+
+.ai-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.ai-result-label {
+  font-size: 24rpx;
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.ai-result-total {
+  font-size: 24rpx;
+  color: #1a2e1f;
+  font-weight: 600;
+}
+
+.ai-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx 22rpx;
+  margin-top: 14rpx;
+}
+
+.ai-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.ai-item-amount {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #27ae60;
+}
+
+.ai-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.ai-item-cat {
+  font-size: 22rpx;
+  color: #27ae60;
+  background: #e8f8ee;
+  padding: 6rpx 14rpx;
+  border-radius: 12rpx;
+}
+
+.ai-item-save {
+  font-size: 24rpx;
+  color: #27ae60;
+  font-weight: 600;
+  padding: 6rpx 4rpx;
+}
+
+.ai-item-remove {
+  font-size: 24rpx;
+  color: #e74c3c;
+  padding: 6rpx 4rpx;
+}
+
+.ai-item-save.disabled,
+.ai-item-remove.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.ai-item-desc {
+  margin-top: 10rpx;
+  font-size: 26rpx;
+  color: #1a2e1f;
+  word-break: break-all;
+}
+
+.ai-item-time-row {
+  margin-top: 10rpx;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.ai-item-time-chip {
+  font-size: 22rpx;
+  color: #5a6b5e;
+  background: #f3f7f4;
+  padding: 6rpx 14rpx;
+  border-radius: 10rpx;
+}
+
+.ai-item-time-chip.muted {
+  color: #9aab9e;
+  background: transparent;
+  padding-left: 4rpx;
+}
+
+.ai-bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.ai-cancel-btn {
+  flex-shrink: 0;
+  width: 160rpx;
+  margin: 0;
+  height: 76rpx;
+  line-height: 72rpx;
+  font-size: 26rpx;
+  padding: 0 16rpx;
+  min-height: 76rpx;
+}
+
+.ai-save-all-btn {
+  flex: 1;
+  margin: 0;
+  height: 76rpx;
+  line-height: 72rpx;
+  font-size: 26rpx;
+  min-height: 76rpx;
+}
+
+.amount-panel {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 32rpx 40rpx 36rpx;
+  margin-bottom: 24rpx;
+  text-align: left;
+}
+
+.amount-hint {
+  font-size: 24rpx;
+  color: #9aab9e;
+  letter-spacing: 2rpx;
+}
+
+.amount-input-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 16rpx;
+  padding: 0 0 12rpx;
+  border-bottom: 2rpx solid #e8f0ea;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.currency {
+  font-size: 40rpx;
+  color: #1a2e1f;
+  font-weight: 700;
+  margin-right: 10rpx;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.amount-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 72rpx;
+  font-weight: 700;
+  color: #1a2e1f;
+  text-align: left;
+  height: 88rpx;
+  line-height: 88rpx;
+}
+
+.amount-ph {
+  color: #d0dbcf;
+}
+
+.quick-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 24rpx;
+}
+
+.quick-amount-btn {
+  flex: 1;
+  min-width: 100rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  text-align: center;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #27ae60;
+  background: #e8f8ee;
+  border-radius: 28rpx;
+  border: 2rpx solid transparent;
+  box-sizing: border-box;
+}
+
+.quick-amount-hover {
+  border-color: #2ecc71;
+  background: #dff5e8;
+}
+
+.card {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 28rpx 28rpx 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.section-label {
+  font-size: 24rpx;
+  color: #9aab9e;
+  margin-bottom: 20rpx;
+}
+
+.section-gap {
+  height: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.recent-row {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 8rpx;
+}
+
+.recent-item {
+  flex: 1;
+  min-width: 0;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16rpx;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  background: #f3f7f4;
+  border-radius: 20rpx;
+  border: 2rpx solid transparent;
+}
+
+.category-item.active {
+  background: #e8f8ee;
+  border-color: #2ecc71;
+}
+
+.cat-icon {
+  font-size: 36rpx;
+  line-height: 1.2;
+}
+
+.cat-name {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #5a6b5e;
+}
+
+.category-item.active .cat-name {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.field-switch {
+  transform: scale(0.9);
+  margin-right: -8rpx;
+}
+
+.recurring-type-row {
+  display: flex;
+  gap: 16rpx;
+  margin: 8rpx 0 16rpx;
+}
+
+.recurring-type-btn {
+  flex: 1;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #5a6b5e;
+  background: #f3f7f4;
+  border-radius: 14rpx;
+}
+
+.recurring-type-btn.active {
+  color: #fff;
+  background: #27ae60;
+}
+
+.field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80rpx;
+}
+
+.field-label {
+  font-size: 28rpx;
+  line-height: 80rpx;
+  color: #1a2e1f;
+  font-weight: 600;
+}
+
+.field-row picker {
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+}
+
+.field-value {
+  display: flex;
+  align-items: center;
+  height: 80rpx;
+  gap: 6rpx;
+  font-size: 28rpx;
+  line-height: 80rpx;
+  color: #5a6b5e;
+}
+
+.field-arrow {
+  font-size: 50rpx;
+  line-height: 50rpx;
+  color: #9aab9e;
+  font-weight: 400;
+  /* › 字形偏下，略微上移与日期对齐 */
+  transform: translateY(-4rpx);
+}
+
+.field-divider {
+  height: 1rpx;
+  background: #eef3ef;
+  margin: 8rpx 0 20rpx;
+}
+
+.field-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.desc-input {
+  font-size: 28rpx;
+  color: #1a2e1f;
+  padding: 8rpx 0;
+}
+
+.desc-ph {
+  color: #b5c4b8;
+}
+
+.submit-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16rpx 32rpx calc(env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(243, 247, 244, 0), #f3f7f4 36%);
+  box-sizing: border-box;
+}
+
+.submit-btn {
+  height: 88rpx;
+}

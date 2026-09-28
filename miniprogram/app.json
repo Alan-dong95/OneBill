@@ -1,0 +1,71 @@
+{
+  "pages": [
+    "pages/splash/splash",
+    "pages/index/index",
+    "pages/ask/ask",
+    "pages/bill-add/bill-add",
+    "pages/bill-list/bill-list",
+    "pages/bill-edit/bill-edit",
+    "pages/profile/profile",
+    "pages/about/about",
+    "pages/feedback/feedback",
+    "pages/budget/budget",
+    "pages/recurring/recurring",
+    "pages/report/report",
+    "pages/stats/stats"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#1a2e1f",
+    "navigationBarTitleText": "韭菜保护本",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f3f7f4",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#9aab9e",
+    "selectedColor": "#27ae60",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab/home-normal.png",
+        "selectedIconPath": "images/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/ask/ask",
+        "text": "问答",
+        "iconPath": "images/tab/ask-normal.png",
+        "selectedIconPath": "images/tab/ask-active.png"
+      },
+      {
+        "pagePath": "pages/bill-add/bill-add",
+        "text": "记一笔",
+        "iconPath": "images/tab/add-normal.png",
+        "selectedIconPath": "images/tab/add-active.png"
+      },
+      {
+        "pagePath": "pages/bill-list/bill-list",
+        "text": "账单",
+        "iconPath": "images/tab/list-normal.png",
+        "selectedIconPath": "images/tab/list-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/tab/profile-normal.png",
+        "selectedIconPath": "images/tab/profile-active.png"
+      }
+    ]
+  },
+  "plugins": {
+    "WechatSI": {
+      "version": "0.3.10",
+      "provider": "wx069ba97219f66d99"
+    }
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

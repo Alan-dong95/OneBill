@@ -1,0 +1,84 @@
+<view class="page">
+  <view class="hero">
+    <view class="hero-top" bindtap="goAbout">
+      <image class="mascot" src="{{mascotSrc}}" mode="aspectFit" />
+      <view class="hero-copy">
+        <view class="brand">韭菜保护本</view>
+        <view class="tip">{{tip}}</view>
+      </view>
+    </view>
+
+    <!-- 今日 + 本月合并的深色主卡片（文案替代原小韭菜图） -->
+    <view class="month-card">
+      <view class="month-top">
+        <text class="month-label" wx:if="{{!loading}}">{{monthLabel}}支出 · {{monthCount}}笔</text>
+        <text class="month-label" wx:else>{{monthLabel}}支出 · ··</text>
+        <text class="month-today" wx:if="{{!loading}}">今日 ¥{{todayTotal}}</text>
+        <text class="month-today" wx:else>今日 ····</text>
+      </view>
+      <view class="month-amount" wx:if="{{!loading}}">¥{{monthTotal}}</view>
+      <view class="month-amount skeleton" wx:else>····</view>
+      <view class="month-tip">{{cardTip}}</view>
+    </view>
+
+    <!-- 预算超支提醒：80% 黄 / 100% 红；预算为 0 不显示 -->
+    <view class="budget-alert budget-alert-warn" wx:if="{{budgetAlertLevel === 'warn'}}">{{budgetAlertText}}</view>
+    <view class="budget-alert budget-alert-danger" wx:if="{{budgetAlertLevel === 'danger'}}">{{budgetAlertText}}</view>
+  </view>
+
+  <!-- 菜菜复盘入口：点击跳独立复盘页 -->
+  <view
+    class="report-entry"
+    hover-class="report-entry-hover"
+    bindtap="goReport"
+  >
+    <image class="report-entry-img" src="{{mascotReportLoading}}" mode="aspectFit" />
+    <view class="report-entry-copy">
+      <view class="report-entry-title">这个月，你被谁割了？</view>
+      <view class="report-entry-sub">让菜菜帮你复盘</view>
+    </view>
+    <view class="report-entry-arrow">›</view>
+  </view>
+
+  <view class="actions">
+    <button class="btn-primary action-btn" hover-class="btn-hover" bindtap="goAdd">记一笔</button>
+    <button class="btn-ghost action-btn" hover-class="btn-hover-ghost" bindtap="goList">看账单</button>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">最近账单</text>
+      <text class="section-link" bindtap="goList" wx:if="{{recent.length}}">全部</text>
+    </view>
+
+    <view wx:if="{{loading}}" class="state">加载中…</view>
+
+    <view wx:elif="{{loadError}}" class="empty-card">
+      <image class="empty-mascot" src="{{mascotStand}}" mode="aspectFit" />
+      <view class="empty-title">账本这会儿卡壳了</view>
+      <view class="empty-desc">网络或登录出了点问题，不是你没记账</view>
+      <button class="btn-primary btn-md empty-btn" hover-class="btn-hover" bindtap="onRetry">再试一次</button>
+    </view>
+
+    <view wx:elif="{{recent.length === 0}}" class="empty-card">
+      <image class="empty-mascot" src="{{mascotStand}}" mode="aspectFit" />
+      <view class="empty-title">还没有账单</view>
+      <view class="empty-desc">记第一笔，开始保护你的钱包</view>
+      <button class="btn-primary btn-md empty-btn" hover-class="btn-hover" bindtap="goAdd">去记一笔</button>
+    </view>
+
+    <view wx:else class="recent-list">
+      <view class="recent-item" wx:for="{{recent}}" wx:key="id" hover-class="item-hover">
+        <view class="recent-icon">{{item.icon}}</view>
+        <view class="recent-mid">
+          <view class="recent-cat">{{item.category}}</view>
+          <view class="recent-desc">{{item.description}}</view>
+        </view>
+        <view class="recent-right">
+          <view class="recent-amount">-¥{{item.amountText}}</view>
+          <view class="recent-time">{{item.time}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

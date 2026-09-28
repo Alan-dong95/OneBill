@@ -1,0 +1,37 @@
+---
+description: 微信小程序约定：页面结构、request、图表、样式与统计页模式
+globs: miniprogram/**/*
+alwaysApply: false
+---
+
+# 小程序（`miniprogram/`）约定
+
+## 结构
+
+- 页面放 `pages/<name>/`（`.ts` / `.wxml` / `.wxss` / `.json`），组件放 `components/`。
+- 网络请求**必须**走 `utils/request`，禁止页面里裸写 `wx.request`（除非改封装本身）。
+- 后端地址只改 `config.ts` 的 `API_BASE`；不要把域名散落到各页。
+
+## TypeScript
+
+- 新代码避免 `any`；不得不收窄时用具体类型或 `unknown`。
+- 异步用 `async/await`；请求失败要有 UI/数据兜底，禁止空 `catch`。
+- 变量默认 `const`；命名 camelCase，常量 UPPER_SNAKE_CASE。
+- **禁止**数组/对象展开（`[...a]`、`{...o}`、`Math.max(...arr)`）：devtools 的 SWC 会注入 `@swc/runtime`，小程序运行时找不到。改用 `slice` / `Object.assign` / 循环。
+
+## 图表（ECharts）
+
+- 使用现有 `components/ec-canvas`；`lazyLoad: true` 后在数据回调里 `init`。
+- 精简包入口是 `components/ec-canvas/_echarts-entry.js`：新增图类型必须改入口并执行 `build-echarts.js`；只注册用到的 chart/component，勿塞 Legend 等未使用模块。
+- `app.json` 保持 `"lazyCodeLoading": "requiredComponents"`，组件按页注入。
+- 多图同页注意：切换 `wx:if` / 月份后丢掉旧实例再画；`dispose` 要防崩。
+- 配色跟品牌绿（`#27ae60` / `#2ecc71` / `#1a2e1f`），与账单页/统计页已有 option 保持一致。
+
+## UI
+
+- 优先复用已有卡片/按钮 class（如 `btn-primary`、`chart-card`），不要另起一套视觉。
+- 统计页：月度/年度切换、`mode` 传给 `/api/v1/stats/overview`；点评优先本地点评，复盘接口兜底文案（「账本这会儿卡壳了」）**不要**盖住本地点评。
+
+## 注释与文案
+
+- 注释、用户可见提示用简体中文；保留文件内已有注释。

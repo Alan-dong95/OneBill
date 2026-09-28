@@ -1,0 +1,168 @@
+/* 韭菜保护本 · 全局设计令牌 */
+page {
+  --color-ink: #1a2e1f;
+  --color-ink-2: #5a6b5e;
+  --color-ink-3: #9aab9e;
+  --color-line: #d8e3db;
+  --color-bg: #f3f7f4;
+  --color-card: #ffffff;
+  --color-primary: #2ecc71;
+  --color-primary-dark: #27ae60;
+  --color-danger: #e74c3c;
+
+  background: var(--color-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  color: var(--color-ink);
+  font-size: 28rpx;
+  line-height: 1.5;
+  min-height: 100%;
+}
+
+.container {
+  padding: 24rpx 32rpx 48rpx;
+  box-sizing: border-box;
+}
+
+/*
+ * 原生 button 重置：清掉默认 padding / 边框伪元素 / 字号差异，
+ * 主次按钮共用同一盒模型，方便后续直接加 loading / disabled。
+ */
+.btn-primary,
+.btn-ghost {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 32rpx;
+  height: 88rpx;
+  line-height: 84rpx; /* height - 2*border */
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-width: 2rpx;
+  border-style: solid;
+  text-align: center;
+}
+
+.btn-primary,
+.btn-ghost {
+  /* 覆盖微信 button 默认最小宽度 */
+  min-height: 88rpx;
+}
+
+.btn-primary {
+  background: #2ecc71;
+  color: #fff;
+  border-color: #2ecc71;
+}
+
+.btn-primary::after {
+  border: none;
+}
+
+.btn-primary[disabled] {
+  background: #2ecc71 !important;
+  color: #fff !important;
+  opacity: 0.5;
+}
+
+.btn-ghost {
+  background: #fff;
+  color: #1a2e1f;
+  border-color: #d8e3db;
+}
+
+.btn-ghost::after {
+  border: none;
+}
+
+.btn-ghost[disabled] {
+  background: #fff !important;
+  color: #1a2e1f !important;
+  opacity: 0.5;
+}
+
+.btn-block {
+  width: 100%;
+  display: block;
+}
+
+.btn-md {
+  width: 280rpx;
+  height: 80rpx;
+  line-height: 76rpx;
+  min-height: 80rpx;
+  font-size: 28rpx;
+  display: block;
+}
+
+.btn-hover {
+  opacity: 0.88;
+}
+
+.btn-hover-ghost {
+  background: #f3f7f4 !important;
+}
+
+.safe-bottom {
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+/* 记账成功：吉祥物庆祝浮层（淡入 + 缩放） */
+.mascot-toast-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 46, 31, 0.28);
+  animation: mascot-mask-in 0.28s ease-out;
+}
+
+.mascot-toast {
+  width: 360rpx;
+  padding: 36rpx 28rpx 32rpx;
+  background: #fff;
+  border-radius: 28rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 16rpx 48rpx rgba(26, 46, 31, 0.12);
+  animation: mascot-toast-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mascot-toast-img {
+  width: 200rpx;
+  height: 200rpx;
+}
+
+.mascot-toast-title {
+  margin-top: 8rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1a2e1f;
+  text-align: center;
+  line-height: 1.4;
+}
+
+@keyframes mascot-mask-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mascot-toast-in {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

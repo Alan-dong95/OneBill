@@ -1,0 +1,5 @@
+node_modules/
+package-lock.json
+
+# 本机私有配置（含本地调试开关等），勿提交
+project.private.config.json

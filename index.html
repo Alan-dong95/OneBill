@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OneBill AI · 面试项目落地手册</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e9384'/%3E%3Cpath d='M10 22V10h3.2v9.1h5.1V22H10zm8.4-2.2c0-2.9 2.4-4.6 5.6-4.6 2.2 0 4 .8 4.7 2.3l-2.8 1.3c-.4-.8-1.1-1.2-2-1.2-1.3 0-2.2.8-2.2 2.2 0 1.5.9 2.3 2.2 2.3 1 0 1.8-.5 2.2-1.4l2.8 1.3c-.9 1.7-2.7 2.6-5 2.6-3.2 0-5.5-1.7-5.5-4.8z' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f5f7fa; --card:#ffffff; --ink:#101828; --ink-2:#475467; --ink-3:#98a2b3;
+  --line:#e4e7ec; --line-soft:#eef1f5;
+  --accent:#0e9384; --accent-strong:#0b7a6e; --accent-soft:#e3f4f1;
+  --blue:#2563eb; --blue-soft:#eaf1fe;
+  --amber:#b45309; --amber-soft:#fdf1e0;
+  --red:#b42318; --red-soft:#fdecea;
+  --code-bg:#0f172a; --code-ink:#e2e8f0;
+  --radius:10px;
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Helvetica Neue",Arial,sans-serif;
+  background:var(--bg); color:var(--ink); font-size:15px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--blue); text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* ===== 顶部导航 ===== */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  background:rgba(255,255,255,.92); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line-soft);
+}
+.topbar-inner{
+  max-width:1060px; margin:0 auto; padding:10px 20px;
+  display:flex; align-items:center; gap:16px;
+}
+.brand{display:flex; align-items:center; gap:9px; font-weight:700; font-size:15px; white-space:nowrap; color:var(--ink);}
+.brand svg{flex:none;}
+.nav-chips{display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; flex:1;}
+.nav-chips::-webkit-scrollbar{display:none;}
+.nav-chips a{
+  flex:none; padding:5px 11px; border-radius:999px; font-size:13px; color:var(--ink-2);
+  border:1px solid transparent; white-space:nowrap;
+}
+.nav-chips a:hover{background:var(--accent-soft); color:var(--accent-strong); text-decoration:none;}
+.topbar .btn-top{
+  flex:none; padding:5px 13px; border-radius:8px; font-size:13px; font-weight:600;
+  background:var(--accent); color:#fff; border:none; cursor:pointer; white-space:nowrap;
+}
+.topbar .btn-top:hover{background:var(--accent-strong);}
+
+/* ===== Hero ===== */
+.hero{
+  background:linear-gradient(180deg,#eef7f5 0%,#f5f7fa 100%);
+  border-bottom:1px solid var(--line-soft);
+}
+.hero-inner{max-width:1060px; margin:0 auto; padding:52px 20px 44px;}
+.hero-badge{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12.5px; font-weight:600; color:var(--accent-strong);
+  background:var(--accent-soft); border:1px solid #bfe6e0;
+  padding:4px 12px; border-radius:999px; margin-bottom:18px;
+}
+.hero h1{font-size:38px; line-height:1.2; letter-spacing:-.5px; font-weight:800;}
+.hero h1 .en{color:var(--accent);}
+.hero-sub{
+  margin-top:12px; font-size:17px; color:var(--ink-2); max-width:640px;
+}
+.hero-stats{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:32px;
+}
+.stat{background:var(--card); border:1px solid var(--line-soft); border-radius:var(--radius); padding:14px 16px; box-shadow:var(--shadow);}
+.stat b{display:block; font-size:22px; font-weight:800; color:var(--ink); line-height:1.3;}
+.stat span{font-size:12.5px; color:var(--ink-3);}
+.hero-cta{margin-top:28px; display:flex; gap:10px; flex-wrap:wrap;}
+.btn{
+  display:inline-flex; align-items:center; gap:6px; padding:10px 18px; border-radius:9px;
+  font-size:14px; font-weight:600; border:none; cursor:pointer; text-decoration:none;
+}
+.btn-primary{background:var(--accent); color:#fff;}
+.btn-primary:hover{background:var(--accent-strong); text-decoration:none;}
+.btn-ghost{background:var(--card); color:var(--ink); border:1px solid var(--line);}
+.btn-ghost:hover{border-color:var(--ink-3); text-decoration:none;}
+
+/* ===== 主体布局 ===== */
+main{max-width:1060px; margin:0 auto; padding:8px 20px 80px;}
+.section{
+  background:var(--card); border:1px solid var(--line-soft); border-radius:14px;
+  margin-top:22px; padding:34px 38px 30px; box-shadow:var(--shadow);
+}
+.sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:8px; border-bottom:1px solid var(--line-soft); padding-bottom:14px;}
+.sec-no{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:15px; font-weight:700; color:var(--accent); flex:none;
+}
+.sec-title{font-size:23px; font-weight:800; letter-spacing:-.3px;}
+.sec-lead{font-size:14px; color:var(--ink-3); margin-left:auto; text-align:right; white-space:nowrap;}
+.sec-body{margin-top:18px;}
+.sec-body h3{font-size:16.5px; font-weight:700; margin:26px 0 8px;}
+.sec-body h3:first-child{margin-top:0;}
+.sec-body h4{font-size:14.5px; font-weight:700; margin:18px 0 6px; color:var(--ink);}
+.sec-body p{margin:8px 0; color:var(--ink-2);}
+.sec-body ul,.sec-body ol{margin:8px 0 8px 22px; color:var(--ink-2);}
+.sec-body li{margin:4px 0;}
+.sec-body strong{color:var(--ink);}
+
+/* 标签 */
+.tag{display:inline-block; font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:999px; vertical-align:1px; margin-left:6px;}
+.tag-p0{background:var(--accent-soft); color:var(--accent-strong);}
+.tag-p1{background:var(--blue-soft); color:var(--blue);}
+.tag-p2{background:var(--amber-soft); color:var(--amber);}
+.tag-risk{background:var(--red-soft); color:var(--red);}
+.tag-skip{background:#f2f4f7; color:var(--ink-3);}
+
+/* 表格 */
+.tbl-wrap{overflow-x:auto; margin:14px 0;}
+table.tbl{width:100%; border-collapse:collapse; table-layout:fixed; font-size:13.5px;}
+table.tbl th{
+  text-align:left; background:#f8fafc; color:var(--ink-2); font-weight:600;
+  padding:9px 12px; border-bottom:1px solid var(--line); font-size:13px;
+}
+table.tbl td{padding:9px 12px; border-bottom:1px solid var(--line-soft); color:var(--ink-2); vertical-align:top; word-break:break-word;}
+table.tbl tr:last-child td{border-bottom:none;}
+table.tbl td b{color:var(--ink); font-weight:600;}
+table.tbl .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px; color:var(--ink);}
+table.tbl .ok{color:var(--accent-strong); font-weight:600;}
+
+/* 代码块 */
+pre.code{
+  background:var(--code-bg); color:var(--code-ink); border-radius:10px;
+  padding:16px 18px; overflow-x:auto; font-size:13px; line-height:1.7; margin:14px 0;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
+  tab-size:2;
+}
+pre.code .cm{color:#64748b;}
+pre.code .kw{color:#93c5fd;}
+pre.code .str{color:#a7f3d0;}
+pre.code .num{color:#fcd34d;}
+pre.code .fn{color:#c4b5fd;}
+
+/* 代码树 */
+pre.tree{
+  background:#f8fafc; border:1px solid var(--line-soft); border-radius:10px;
+  padding:16px 18px; overflow-x:auto; font-size:13px; line-height:1.75;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
+  color:#334155; margin:14px 0;
+}
+pre.tree .d{color:var(--accent-strong); font-weight:600;}
+pre.tree .f{color:#475467;}
+pre.tree .c{color:var(--ink-3);}
+
+/* 提示块 */
+.callout{
+  border-radius:10px; padding:13px 16px 13px 15px; margin:14px 0; font-size:14px;
+  border-left:3px solid;
+}
+.callout p{margin:0; color:inherit;}
+.callout strong{color:inherit;}
+.callout-tip{background:var(--accent-soft); border-color:var(--accent); color:var(--accent-strong);}
+.callout-info{background:var(--blue-soft); border-color:var(--blue); color:#1e40af;}
+.callout-warn{background:var(--amber-soft); border-color:var(--amber); color:#92400e;}
+.callout-risk{background:var(--red-soft); border-color:var(--red); color:#7f1d1d;}
+
+/* 卡片网格 */
+.grid{display:grid; gap:14px; margin:14px 0;}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.card{
+  background:#fbfcfd; border:1px solid var(--line-soft); border-radius:10px; padding:16px 18px;
+}
+.card h4{margin:0 0 6px !important; font-size:14.5px;}
+.card p{font-size:13.5px; margin:0; color:var(--ink-2);}
+
+/* 时间轴 */
+.timeline{margin:20px 0 6px; display:flex; flex-direction:column; gap:0;}
+.tl-row{display:grid; grid-template-columns:86px 34px 1fr; gap:0;}
+.tl-time{
+  padding:10px 8px 10px 0; text-align:right; font-size:13px; font-weight:700; color:var(--accent-strong);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.tl-axis{position:relative; display:flex; justify-content:center;}
+.tl-axis::before{content:""; position:absolute; top:0; bottom:0; width:2px; background:var(--line);}
+.tl-row:first-child .tl-axis::before{top:50%;}
+.tl-row:last-child .tl-axis::before{bottom:50%;}
+.tl-dot{
+  position:relative; z-index:1; align-self:center; width:12px; height:12px; border-radius:50%;
+  background:var(--accent); border:2px solid var(--card); box-shadow:0 0 0 2px var(--accent);
+}
+.tl-body{padding:8px 0 22px 14px;}
+.tl-body b{font-size:15px; display:block; line-height:1.5;}
+.tl-body .tl-tag{font-size:12px; color:var(--ink-3); font-weight:600;}
+.tl-body ul{margin:6px 0 0 18px; font-size:13.5px; color:var(--ink-2);}
+.tl-body li{margin:3px 0;}
+
+/* FAQ */
+details.faq{border:1px solid var(--line-soft); border-radius:10px; padding:0; margin:10px 0; background:#fbfcfd;}
+details.faq summary{
+  cursor:pointer; padding:13px 18px; font-weight:600; font-size:14.5px; list-style:none; position:relative;
+}
+details.faq summary::-webkit-details-marker{display:none;}
+details.faq summary::after{
+  content:"+"; position:absolute; right:16px; top:50%; transform:translateY(-50%);
+  font-size:18px; color:var(--ink-3); font-weight:400;
+}
+details.faq[open] summary::after{content:"−";}
+details.faq .faq-body{padding:0 18px 14px; font-size:14px; color:var(--ink-2); border-top:1px dashed var(--line-soft); padding-top:10px;}
+details.faq .faq-body p{margin:6px 0;}
+
+/* 清单 */
+.checklist{list-style:none; margin:12px 0; padding:0;}
+.checklist li{
+  padding:9px 12px 9px 40px; position:relative; background:#fbfcfd;
+  border:1px solid var(--line-soft); border-radius:8px; margin:7px 0; color:var(--ink-2); font-size:14px;
+}
+.checklist li::before{
+  content:""; position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  width:16px; height:16px; border:1.5px solid var(--accent); border-radius:4px; background:var(--accent-soft);
+}
+.checklist li b{color:var(--ink);}
+
+/* 返回顶部 */
+#toTop{
+  position:fixed; right:22px; bottom:22px; z-index:60; width:42px; height:42px; border-radius:50%;
+  background:var(--ink); color:#fff; border:none; cursor:pointer; font-size:18px;
+  opacity:0; pointer-events:none; transition:opacity .2s; box-shadow:0 4px 12px rgba(16,24,40,.2);
+}
+#toTop.show{opacity:1; pointer-events:auto;}
+
+/* 页脚 */
+footer{border-top:1px solid var(--line-soft); background:var(--card);}
+.foot-inner{max-width:1060px; margin:0 auto; padding:26px 20px; font-size:13px; color:var(--ink-3); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+
+/* 响应式 */
+@media (max-width:860px){
+  .hero h1{font-size:29px;}
+  .hero-stats{grid-template-columns:repeat(2,1fr);}
+  .grid-3{grid-template-columns:1fr;}
+  .grid-2{grid-template-columns:1fr;}
+  .section{padding:24px 20px 22px;}
+  .sec-head{flex-wrap:wrap; gap:6px 12px;}
+  .sec-lead{display:none;}
+  .tl-row{grid-template-columns:72px 26px 1fr;}
+  .brand span.brand-sub{display:none;}
+}
+@media (max-width:520px){
+  .hero-inner{padding:38px 16px 32px;}
+  .topbar .btn-top{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 顶部导航 ===== -->
+<nav class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0e9384"/><path d="M10 22V10h3.2v9.1h5.1V22H10zm8.4-2.2c0-2.9 2.4-4.6 5.6-4.6 2.2 0 4 .8 4.7 2.3l-2.8 1.3c-.4-.8-1.1-1.2-2-1.2-1.3 0-2.2.8-2.2 2.2 0 1.5.9 2.3 2.2 2.3 1 0 1.8-.5 2.2-1.4l2.8 1.3c-.9 1.7-2.7 2.6-5 2.6-3.2 0-5.5-1.7-5.5-4.8z" fill="#fff"/></svg>
+      OneBill AI <span class="brand-sub" style="font-weight:500;color:var(--ink-3);font-size:13px;">面试项目落地手册</span>
+    </div>
+    <div class="nav-chips">
+      <a href="#s1">01 定位</a><a href="#s2">02 功能</a><a href="#s3">03 选型</a>
+      <a href="#s4">04 架构</a><a href="#s5">05 目录</a><a href="#s6">06 数据库</a>
+      <a href="#s7">07 API</a><a href="#s8">08 AI 设计</a><a href="#s9">09 排期</a>
+      <a href="#s10">10 面试</a><a href="#s11">11 风险</a><a href="#s12">12 行动</a>
+    </div>
+    <button class="btn-top" onclick="document.getElementById('s12').scrollIntoView()">开始动手</button>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">AI 应用工程师 · 面试展示项目 · 完整落地手册 v1.0</div>
+    <h1><span class="en">OneBill AI</span> · 一笔账</h1>
+    <p class="hero-sub">让 AI 当你的 CFO：三秒记一笔账，每月自动生成一份看得懂的消费洞察报告，还能用一句话查回任何一笔账单。</p>
+    <div class="hero-stats">
+      <div class="stat"><b>5–6 周</b><span>分 6 个阶段，可压缩可拉长</span></div>
+      <div class="stat"><b>5+ 项</b><span>核心 AI 技术点覆盖面试高频考点</span></div>
+      <div class="stat"><b>≈0 元</b><span>开发期成本（语音/OCR 走免费额度）</span></div>
+      <div class="stat"><b>1 个</b><span>"一句查账单"RAG 彩蛋，拉开差距</span></div>
+    </div>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#s9">查看完整排期</a>
+      <a class="btn btn-ghost" href="#s12">今日行动清单</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= 01 项目定位 ================= -->
+<section class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-no">01</span>
+    <h2 class="sec-title">项目定位与面试叙事</h2>
+    <span class="sec-lead">为什么是它 · 怎么讲</span>
+  </div>
+  <div class="sec-body">
+
+    <h3>一句话定位</h3>
+    <p><strong>「让 AI 当你的 CFO」</strong>：多模态入口把记账成本降到几乎为零，AI 不只记录，还主动产出消费洞察，并用自然语言回答你关于钱的任何问题。</p>
+
+    <h3>面试叙事：三段论</h3>
+    <div class="grid grid-3">
+      <div class="card"><h4>1. 为什么做（痛点）</h4><p>记账产品普遍"记完就完"，坚持难、不产生价值。链路过长：记账 → 分类 → 复盘 → 决策，每一步都在流失用户——这是真实的留存问题，也是你做增长背景最有发言权的角度。</p></div>
+      <div class="card"><h4>2. 怎么做（工程）</h4><p>完整 AI 应用工程链路：多模态入口（语音/拍照/手输）→ LLM 结构化输出 → 规则兜底防幻觉 → 月度洞察生成 → RAG 混合检索回答账单问题。每个环节都能讲出取舍。</p></div>
+      <div class="card"><h4>3. 结果（亮点）</h4><p>记账成本趋近于零（说话、拍照即可）；AI 主动产出价值（月报洞察）；"一句话查账单"解决"钱去哪了"的终极追问——这是一个别人没做烂的完整闭环。</p></div>
+    </div>
+
+    <h3>对面试 JD 的技术栈覆盖</h3>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:26%"><col style="width:37%"><col style="width:37%"></colgroup>
+        <thead><tr><th>JD 要求</th><th>本项目落点</th><th>讲深度的切入点</th></tr></thead>
+        <tbody>
+          <tr><td><b>大模型应用与 Prompt 工程</b></td><td>分类 / 解析 / 月报洞察 / 问答 4 套 Prompt 体系</td><td>few-shot + JSON 结构化 + 兜底重试，防幻觉的工程手段</td></tr>
+          <tr><td><b>RAG / 检索增强</b></td><td>账单问答彩蛋：混合检索（结构化查询 + 语义检索）</td><td>为什么纯 RAG / 纯 SQL 都不够，两路合并怎么设计</td></tr>
+          <tr><td><b>多模态接入</b></td><td>语音（微信同声传译）+ 图像（票据 OCR）</td><td>识别结果不可靠时，如何用 LLM 清洗 + 人工核对闭环</td></tr>
+          <tr><td><b>后端开发与架构</b></td><td>FastAPI + PostgreSQL + pgvector 自建全链路</td><td>自建 vs 平台全家桶的取舍、降级链、成本控制</td></tr>
+          <tr><td><b>前端 / 小程序</b></td><td>原生微信小程序 + TS + ECharts</td><td>端上体验设计：两段式确认防幻觉金额</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-tip"><p><strong>加分叙事（你的独特背景）</strong>：你懂增长——可以把"注册→入金→购买链路长导致流失"的业务判断映射到产品设计上："记账→分类→复盘→决策"也是链路，本项目每一层都在压缩链路、降低摩擦。面试官会记住"这个人既懂业务漏斗，又能把 AI 工程落地"。</p></div>
+  </div>
+</section>
+
+<!-- ================= 02 功能范围 ================= -->
+<section class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-no">02</span>
+    <h2 class="sec-title">功能范围</h2>
+    <span class="sec-lead">P0 核心 · P1 彩蛋 · P2 可选</span>
+  </div>
+  <div class="sec-body">
+
+    <h3>P0 · 核心闭环（必须全部完成）</h3>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:17%"><col style="width:38%"><col style="width:25%"><col style="width:20%"></colgroup>
+        <thead><tr><th>功能</th><th>用户故事</th><th>AI 角色</th><th>关键交互</th></tr></thead>
+        <tbody>
+          <tr><td><b>微信登录</b></td><td>打开即用，无需注册</td><td>—</td><td>code2session → JWT</td></tr>
+          <tr><td><b>手动记账</b></td><td>随手补录一笔消费</td><td>AI 自动分类 + 打子类标签</td><td>输入金额/描述 → 分类结果可改</td></tr>
+          <tr><td><b>语音记账</b></td><td>"中午和同事吃了顿火锅 87 块"</td><td>语音转文字 + AI 解析金额/类别/描述</td><td>长按说话 → 解析草稿 → 确认</td></tr>
+          <tr><td><b>拍照记账</b></td><td>拍小票/发票自动入账</td><td>OCR 结构化 + AI 补全分类</td><td>拍照 → 识别结果 → 核对确认</td></tr>
+          <tr><td><b>账单列表</b></td><td>按月/类别筛选、编辑删除</td><td>—</td><td>列表 + 筛选 + 下拉分页</td></tr>
+          <tr><td><b>月度洞察</b></td><td>月初自动收到"上月消费报告"</td><td>聚合统计 + LLM 生成自然语言洞察</td><td>ECharts 图表 + AI 结论卡片</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>P1 · 彩蛋（拉开面试差距，必须做）</h3>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:17%"><col style="width:45%"><col style="width:38%"></colgroup>
+        <thead><tr><th>功能</th><th>用户故事</th><th>技术含金量</th></tr></thead>
+        <tbody>
+          <tr><td><b>账单问答</b><span class="tag tag-p1">RAG</span></td><td>"上月奶茶一共花了多少？""那家特别好吃的日料店叫什么来着？"</td><td>混合检索：LLM 转结构化查询（时间/类别/金额）+ 描述向量语义检索，两路合并生成回答</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>P2 · 可选（时间富余再上，不影响主线）</h3>
+    <ul>
+      <li><strong>预算提醒</strong><span class="tag tag-p2">P2</span>：月初设预算，超支实时提醒——纯规则逻辑，不涉及 AI。</li>
+      <li><strong>订阅检测</strong><span class="tag tag-p2">P2</span>：识别周期性扣款（每月同金额同商户），提示"你正在为 6 个订阅付费"——可以用 LLM 聚类，有讲点。</li>
+      <li><strong>多账本</strong><span class="tag tag-p2">P2</span>：家庭/个人分账本——工程量大于 AI 量，优先级最低。</li>
+    </ul>
+
+    <h3>明确不做（范围控制，面试也是加分项）</h3>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:28%"><col style="width:72%"></colgroup>
+        <thead><tr><th>不做</th><th>理由（面试官问"为什么没做"时直接用）</th></tr></thead>
+        <tbody>
+          <tr><td>理财建议 / 投资推荐</td><td>合规风险高，超出"工具"定位；面试重点展示的是工程能力不是金融能力</td></tr>
+          <tr><td>多币种 / 汇率</td><td>用户场景不需要，引入汇率数据源增加不可控依赖</td></tr>
+          <tr><td>社交 / 分享排行</td><td>隐私敏感，账单是高度私密数据，社交化与信任矛盾</td></tr>
+          <tr><td>复杂报表系统</td><td>MVP 用 ECharts 月度视图足够，报表可以后置迭代</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-info"><p><strong>范围原则</strong>：每个 P0 功能都构成"入口 → AI 处理 → 人工确认 → 入库"的完整闭环。宁可少而完整，不要多而残缺——面试演示时每个功能都能走通，比功能数量重要得多。</p></div>
+  </div>
+</section>
+
+<!-- ================= 03 技术选型 ================= -->
+<section class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-no">03</span>
+    <h2 class="sec-title">技术选型</h2>
+    <span class="sec-lead">每项选型都附理由与备选</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:14%"><col style="width:21%"><col style="width:14%"><col style="width:33%"><col style="width:18%"></colgroup>
+        <thead><tr><th>层</th><th>选型</th><th>版本</th><th>为什么是它</th><th>备选</th></tr></thead>
+        <tbody>
+          <tr><td><b>小程序前端</b></td><td>微信原生 + TypeScript</td><td>基础库 ≥ 3.15.1</td><td>零框架心智负担；官方模板即 TS；面试讲得清"原生能力 + 组件化"</td><td>uni-app / Taro（不推荐：加构建层，面试减分）</td></tr>
+          <tr><td><b>图表</b></td><td>ECharts（ec-canvas）</td><td>5.x</td><td>月度洞察可视化，社区成熟</td><td>手绘 canvas（费时）</td></tr>
+          <tr><td><b>语音识别</b></td><td>微信同声传译插件</td><td>—</td><td>官方免费，前端直出文字，后端零成本 <span class="ok">✓ 平台红利</span></td><td>讯飞 / 腾讯云 ASR（付费）</td></tr>
+          <tr><td><b>OCR</b></td><td>腾讯云通用票据识别（高级版）</td><td>—</td><td>小票/发票结构化字段准确；1000 次/月免费额度够开发+演示 <span class="ok">✓ 免费额度</span></td><td>微信服务端 /cv/ocr/comm（偏印刷体，票据弱）</td></tr>
+          <tr><td><b>后端框架</b></td><td>FastAPI</td><td>最新稳定版</td><td>异步、自动 OpenAPI 文档、Pydantic 校验与 LLM 输出校验天然契合；面试主流</td><td>Flask（同步、样板多）/ Django（重）</td></tr>
+          <tr><td><b>ORM / 迁移</b></td><td>SQLAlchemy 2.0 + Alembic</td><td>2.0.x</td><td>类型安全、迁移可审计——面试可讲"表结构演进"</td><td>raw SQL（开发慢）</td></tr>
+          <tr><td><b>数据库</b></td><td>PostgreSQL</td><td>16+</td><td>pgvector 插件：结构化 + 向量一套库，事务一致、免运维 <span class="ok">✓ 面试亮点</span></td><td>MySQL + 外部向量库（两套系统）</td></tr>
+          <tr><td><b>向量检索</b></td><td>pgvector</td><td>0.7+</td><td>账单是"结构化 + 文本"混合数据，同库检索最自然</td><td>Chroma / Qdrant（多一个服务）</td></tr>
+          <tr><td><b>Embedding</b></td><td>BGE-M3</td><td>—</td><td>中文效果好；走硅基流动 API 有免费额度，或本地部署零调用费</td><td>混元 embedding / 通义 embedding</td></tr>
+          <tr><td><b>LLM</b></td><td>DeepSeek API</td><td>以官方控制台开放模型为准</td><td>便宜、中文强、你已有 key；分类这类高频调用成本极低</td><td>豆包 API（备选通道）；wx.cloud.extend.AI（救急通道）</td></tr>
+          <tr><td><b>鉴权</b></td><td>微信登录 + JWT</td><td>—</td><td>标准做法，无自建密码体系</td><td>—</td></tr>
+          <tr><td><b>部署</b></td><td>开发期本地 + 演示期轻量云</td><td>—</td><td>开发期用开发者工具"不校验合法域名"；演示期租腾讯云轻量（约 ¥50/月）</td><td>Railway / Render（境外，域名合规麻烦）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>三个关键选型决策（面试必讲）</h3>
+    <div class="grid grid-3">
+      <div class="card"><h4>为什么自建后端</h4><p>wx.cloud.extend.AI / CloudBase Agent 确实能省掉后端——但面试官想听的是你如何设计系统，而不是你如何配置平台。自建 = 每个技术点都可控可讲：Prompt、RAG、降级、成本，全是你的。</p></div>
+      <div class="card"><h4>为什么 pgvector 一套库</h4><p>账单既要做 SQL 聚合（"上月餐饮花多少"）又要做语义检索（"那家日料店"）。用一套 PostgreSQL 同时承载结构化数据 + 向量，省掉向量库的运维和一致性同步问题——这是混合检索架构的地基。</p></div>
+      <div class="card"><h4>为什么原生小程序</h4><p>面试展示的是"AI 应用工程师"能力，不是"前端框架熟练度"。原生 TS + 组件化足够；且微信同声传译、ECharts 等官方/成熟生态都是原生友好。少一个构建层，多一份可控。</p></div>
+    </div>
+
+    <h3>成本估算（演示期）</h3>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:30%"><col style="width:26%"><col style="width:44%"></colgroup>
+        <thead><tr><th>项目</th><th>费用</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>DeepSeek API</td><td>≈ ¥0.5–3/月</td><td>个人自用 + 演示规模：分类约 2000 次、月报 2 次、问答少量，token 消耗极小</td></tr>
+          <tr><td>腾讯云 OCR</td><td>¥0</td><td>1000 次/月免费额度，个人演示绰绰有余</td></tr>
+          <tr><td>语音识别</td><td>¥0</td><td>微信同声传译插件免费</td></tr>
+          <tr><td>Embedding</td><td>¥0–少量</td><td>本地 BGE-M3 免费 / 硅基流动免费额度</td></tr>
+          <tr><td>服务器（演示期）</td><td>≈ ¥50/月</td><td>腾讯云轻量 2C2G 够用；开发期无需购买</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 04 系统架构 ================= -->
+<section class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-no">04</span>
+    <h2 class="sec-title">系统架构</h2>
+    <span class="sec-lead">混合架构：官方能力 + 自建后端</span>
+  </div>
+  <div class="sec-body">
+
+    <p>架构原则：<strong>微信官方能力只用在免费且它做得更好的地方（语音、OCR 通道），面试要讲深度的技术全部留在自建后端。</strong></p>
+
+    <div style="margin:20px 0;border:1px solid var(--line-soft);border-radius:12px;overflow:hidden;">
+      <div style="background:#0f172a;color:#cbd5e1;padding:10px 16px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;">系统架构 · 数据流（示意）</div>
+      <div style="background:#fff;padding:18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;">
+          <div style="flex:1;min-width:220px;border:1px solid var(--line);border-radius:10px;padding:12px;background:#fbfcfd;">
+            <div style="font-weight:700;font-size:13.5px;margin-bottom:8px;color:var(--ink);">小程序端（微信生态）</div>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;">
+              <div style="border:1px solid #bfe6e0;background:var(--accent-soft);border-radius:7px;padding:6px 9px;color:#0b7a6e;">语音记账 → 同声传译插件（官方·免费）</div>
+              <div style="border:1px solid #bfe6e0;background:var(--accent-soft);border-radius:7px;padding:6px 9px;color:#0b7a6e;">拍照记账 → 上传图片（OCR 走后端代理）</div>
+              <div style="border:1px solid var(--line);border-radius:7px;padding:6px 9px;color:var(--ink-2);">手动记账 · 账单列表 · 月度洞察 · 账单问答</div>
+            </div>
+          </div>
+          <div style="align-self:center;font-size:20px;color:var(--ink-3);">⇄</div>
+          <div style="flex:2;min-width:300px;border:1px solid var(--blue);border-radius:10px;padding:12px;background:var(--blue-soft);">
+            <div style="font-weight:700;font-size:13.5px;margin-bottom:8px;color:#1e40af;">自建后端 · FastAPI（面试主战场）</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;font-size:12.5px;">
+              <div style="border:1px solid #bfdbfe;background:#fff;border-radius:7px;padding:6px 9px;flex:1;min-width:130px;">auth 登录鉴权</div>
+              <div style="border:1px solid #bfdbfe;background:#fff;border-radius:7px;padding:6px 9px;flex:1;min-width:130px;">bills 账单 CRUD</div>
+              <div style="border:1px solid #bfdbfe;background:#fff;border-radius:7px;padding:6px 9px;flex:1;min-width:130px;">classify AI 分类引擎</div>
+              <div style="border:1px solid #bfdbfe;background:#fff;border-radius:7px;padding:6px 9px;flex:1;min-width:130px;">parse 语音/文本解析</div>
+              <div style="border:1px solid #bfdbfe;background:#fff;border-radius:7px;padding:6px 9px;flex:1;min-width:130px;">ocr 代理 + 字段清洗</div>
+              <div style="border:1px solid #bfdbfe;background:#fff;border-radius:7px;padding:6px 9px;flex:1;min-width:130px;">report 月报聚合 + 洞察</div>
+              <div style="border:1px solid #bfdbfe;background:#fff;border-radius:7px;padding:6px 9px;flex:1;min-width:130px;">chat RAG 混合检索问答</div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:18px;color:var(--ink-3);padding:6px 0;">↓</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <div style="flex:1;min-width:220px;border:1px solid var(--line);border-radius:10px;padding:12px;background:#fbfcfd;">
+            <div style="font-weight:700;font-size:13.5px;margin-bottom:8px;color:var(--ink);">数据层</div>
+            <div style="font-size:12.5px;color:var(--ink-2);line-height:1.9;">PostgreSQL 16 + pgvector<br>users / bills / bill_vectors / monthly_reports</div>
+          </div>
+          <div style="flex:1;min-width:220px;border:1px solid #e9d5ff;border-radius:10px;padding:12px;background:#faf5ff;">
+            <div style="font-weight:700;font-size:13.5px;margin-bottom:8px;color:#6b21a8;">外部服务</div>
+            <div style="font-size:12.5px;color:#6b21a8;line-height:1.9;">DeepSeek API（分类/解析/洞察/问答）<br>腾讯云 OCR（票据识别，免费额度）<br>BGE-M3 embedding（本地或 API）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>关键设计：两段式"解析 → 确认"流</h3>
+    <p>所有 AI 入口（语音/拍照/手输）都走同一条链路：<strong>先产出"结构化草稿"给用户看，用户确认后才入库</strong>。原因：LLM 会幻觉金额，OCR 会认错字——让 AI 承担"加速输入"而非"替你做主"，这是产品信任的关键，也是面试官爱听的工程判断。</p>
+    <div class="callout callout-tip"><p><strong>链路</strong>：入口（语音/拍照/手输）→ <span class="mono">/parse</span> 或 <span class="mono">/ocr</span> 产出草稿 → 前端展示草稿（金额/类别/描述/时间，可编辑）→ 用户确认 → <span class="mono">POST /bills</span> 入库（此时才调分类）</p></div>
+  </div>
+</section>
+
+<!-- ================= 05 目录结构 ================= -->
+<section class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-no">05</span>
+    <h2 class="sec-title">项目目录结构</h2>
+    <span class="sec-lead">前后端一个仓库，职责分层清晰</span>
+  </div>
+  <div class="sec-body">
+    <pre class="tree">onebill-ai/
+├── <span class="d">miniprogram/</span>            <span class="c"># 微信小程序（原生 TS）</span>
+│   ├── app.ts / app.json / app.wxss
+│   ├── pages/
+│   │   ├── index/        <span class="c"># 首页：快捷记账（语音/拍照/手动）</span>
+│   │   ├── bills/        <span class="c"># 账单列表 + 筛选 + 编辑</span>
+│   │   ├── report/       <span class="c"># 月度洞察（ECharts + AI 结论）</span>
+│   │   ├── chat/         <span class="c"># 账单问答（P1 彩蛋）</span>
+│   │   └── mine/         <span class="c"># 我的：账号、数据导出、隐私</span>
+│   ├── components/
+│   │   ├── bill-form/    <span class="c"># 记账表单（含草稿确认态）</span>
+│   │   └── amount-input/ <span class="c"># 金额输入（键盘校验）</span>
+│   ├── utils/
+│   │   ├── request.ts    <span class="c"># 统一请求封装（JWT 注入/错误码）</span>
+│   │   ├── auth.ts       <span class="c"># 登录态管理</span>
+│   │   └── format.ts     <span class="c"># 金额/日期格式化</span>
+│   └── ec-canvas/        <span class="c"># ECharts 小程序组件</span>
+│
+└── <span class="d">server/</span>                 <span class="c"># 后端（FastAPI + SQLAlchemy）</span>
+    ├── app/
+    │   ├── main.py       <span class="c"># 入口 + CORS + 路由注册</span>
+    │   ├── config.py     <span class="c"># 配置（密钥/API key 走环境变量）</span>
+    │   ├── models/       <span class="c"># SQLAlchemy 模型（user/bill/vector/report）</span>
+    │   ├── schemas/      <span class="c"># Pydantic 请求/响应模型</span>
+    │   ├── routers/      <span class="c"># auth/bills/ocr/report/chat</span>
+    │   ├── services/
+    │   │   ├── llm.py    <span class="c"># DeepSeek 客户端（超时/重试/降级）</span>
+    │   │   ├── classify.py  <span class="c"># 分类 Prompt + JSON 校验 + 规则兜底</span>
+    │   │   ├── parse.py  <span class="c"># 语音/文本解析（金额防幻觉）</span>
+    │   │   ├── ocr.py    <span class="c"># 腾讯云 OCR 代理 + 字段清洗</span>
+    │   │   ├── report.py <span class="c"># 月报聚合 + 洞察生成 + 缓存</span>
+    │   │   └── rag.py    <span class="c"># 混合检索（SQL 过滤 + 向量召回）</span>
+    │   └── core/
+    │       ├── deps.py   <span class="c"># 依赖注入（当前用户）</span>
+    │       └── security.py  <span class="c"># JWT 签发/校验</span>
+    ├── alembic/          <span class="c"># 数据库迁移</span>
+    ├── tests/            <span class="c"># pytest：分类/解析/检索单测</span>
+    └── requirements.txt / .env.example</pre>
+  </div>
+</section>
+
+<!-- ================= 06 数据库设计 ================= -->
+<section class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-no">06</span>
+    <h2 class="sec-title">数据库设计</h2>
+    <span class="sec-lead">PostgreSQL + pgvector</span>
+  </div>
+  <div class="sec-body">
+
+    <h3>四张表总览</h3>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:18%"><col style="width:22%"><col style="width:36%"><col style="width:24%"></colgroup>
+        <thead><tr><th>表</th><th>职责</th><th>核心字段</th><th>设计要点</th></tr></thead>
+        <tbody>
+          <tr><td><span class="mono">users</span></td><td>用户</td><td>openid(uniq) / nickname / avatar</td><td>openid 即身份，不存密码</td></tr>
+          <tr><td><span class="mono">bills</span></td><td>账单明细</td><td>user_id / amount / category / sub_category / description / source / raw_text / bill_time</td><td><b>category 固定枚举</b>；source 记录入口（manual/voice/ocr）</td></tr>
+          <tr><td><span class="mono">bill_vectors</span></td><td>账单向量</td><td>bill_id(FK) / embedding vector(1024)</td><td>与 bills 分表：主表瘦身、向量可独立重建</td></tr>
+          <tr><td><span class="mono">monthly_reports</span></td><td>月报缓存</td><td>user_id / month / content jsonb</td><td>洞察结果落库，避免重复调用 LLM</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>分类枚举（内置，固定）</h3>
+    <p><span class="mono">餐饮、交通、购物、居住、娱乐、医疗、教育、人情、旅行、投资、转账、其他</span> —— 12 类。子类不建表，由 LLM 在枚举内自由产出（如"餐饮 → 咖啡"）。固定大类是后续聚合统计和 SQL 检索的基石。</p>
+
+    <h3>建表 SQL（核心）</h3>
+<pre class="code"><span class="kw">CREATE EXTENSION</span> <span class="kw">IF NOT EXISTS</span> vector;
+
+<span class="kw">CREATE TABLE</span> users (
+  id          BIGSERIAL <span class="kw">PRIMARY KEY</span>,
+  openid      TEXT <span class="kw">NOT NULL UNIQUE</span>,
+  nickname    TEXT,
+  avatar      TEXT,
+  created_at  TIMESTAMPTZ <span class="kw">NOT NULL DEFAULT</span> now()
+);
+
+<span class="kw">CREATE TABLE</span> bills (
+  id          BIGSERIAL <span class="kw">PRIMARY KEY</span>,
+  user_id     BIGINT <span class="kw">NOT NULL REFERENCES</span> users(id),
+  amount      NUMERIC(12,2) <span class="kw">NOT NULL CHECK</span> (amount > 0),
+  category    TEXT <span class="kw">NOT NULL</span>,
+  sub_category TEXT,
+  description TEXT,
+  source      TEXT <span class="kw">NOT NULL DEFAULT</span> <span class="str">'manual'</span>,  <span class="cm">-- manual | voice | ocr</span>
+  raw_text    TEXT,                                <span class="cm">-- AI 解析前的原文，可追溯</span>
+  bill_time   TIMESTAMPTZ <span class="kw">NOT NULL</span>,
+  created_at  TIMESTAMPTZ <span class="kw">NOT NULL DEFAULT</span> now()
+);
+<span class="kw">CREATE INDEX</span> idx_bills_user_time <span class="kw">ON</span> bills(user_id, bill_time <span class="kw">DESC</span>);
+<span class="kw">CREATE INDEX</span> idx_bills_user_cat  <span class="kw">ON</span> bills(user_id, category, bill_time <span class="kw">DESC</span>);
+
+<span class="kw">CREATE TABLE</span> bill_vectors (
+  bill_id     BIGINT <span class="kw">PRIMARY KEY REFERENCES</span> bills(id) <span class="kw">ON DELETE CASCADE</span>,
+  embedding   vector(1024) <span class="kw">NOT NULL</span>,       <span class="cm">-- BGE-M3 维度</span>
+  updated_at  TIMESTAMPTZ <span class="kw">NOT NULL DEFAULT</span> now()
+);
+<span class="kw">CREATE INDEX</span> idx_bill_vectors_hnsw <span class="kw">ON</span> bill_vectors
+  <span class="kw">USING</span> hnsw (embedding vector_cosine_ops);
+
+<span class="kw">CREATE TABLE</span> monthly_reports (
+  id          BIGSERIAL <span class="kw">PRIMARY KEY</span>,
+  user_id     BIGINT <span class="kw">NOT NULL REFERENCES</span> users(id),
+  month       TEXT <span class="kw">NOT NULL</span>,               <span class="cm">-- '2026-09'</span>
+  content     JSONB <span class="kw">NOT NULL</span>,              <span class="cm">-- 聚合数据 + AI 洞察文本</span>
+  created_at  TIMESTAMPTZ <span class="kw">NOT NULL DEFAULT</span> now(),
+  <span class="kw">UNIQUE</span>(user_id, month)
+);</pre>
+
+    <div class="callout callout-info"><p><strong>面试讲点</strong>：为什么 bills 与 bill_vectors 分表？① 主表避免携带 1024 维向量的大字段，扫描更轻；② 向量可随时全量重建（改 embedding 模型不碰主表）；③ 通过 <span class="mono">ON DELETE CASCADE</span> 保证一致性。分表理由能讲出数据库设计思考。</p></div>
+  </div>
+</section>
+
+<!-- ================= 07 API 设计 ================= -->
+<section class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-no">07</span>
+    <h2 class="sec-title">API 接口设计</h2>
+    <span class="sec-lead">9 个接口 · 含请求/响应示例</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:12%"><col style="width:34%"><col style="width:28%"><col style="width:26%"></colgroup>
+        <thead><tr><th>方法</th><th>路径</th><th>说明</th><th>AI 参与</th></tr></thead>
+        <tbody>
+          <tr><td><span class="mono">POST</span></td><td class="mono">/api/v1/auth/login</td><td>code → openid → 返回 JWT</td><td>—</td></tr>
+          <tr><td><span class="mono">GET</span></td><td class="mono">/api/v1/categories</td><td>分类枚举</td><td>—</td></tr>
+          <tr><td><span class="mono">POST</span></td><td class="mono">/api/v1/bills/parse</td><td>语音/文本 → 结构化草稿（金额/类别/描述/时间）</td><td><b>LLM 解析</b></td></tr>
+          <tr><td><span class="mono">POST</span></td><td class="mono">/api/v1/bills/ocr</td><td>上传图片 → OCR 字段清洗 → 结构化草稿</td><td><b>OCR + LLM</b></td></tr>
+          <tr><td><span class="mono">POST</span></td><td class="mono">/api/v1/bills</td><td>创建账单（草稿确认后调用，AI 补分类）</td><td><b>LLM 分类</b></td></tr>
+          <tr><td><span class="mono">GET</span></td><td class="mono">/api/v1/bills?month=&category=&page=&size=</td><td>列表 + 筛选 + 分页</td><td>—</td></tr>
+          <tr><td><span class="mono">PATCH/DELETE</span></td><td class="mono">/api/v1/bills/{id}</td><td>编辑 / 删除（同步更新向量）</td><td>—</td></tr>
+          <tr><td><span class="mono">GET</span></td><td class="mono">/api/v1/reports/monthly?month=2026-09</td><td>聚合统计 + LLM 洞察（带缓存）</td><td><b>LLM 洞察</b></td></tr>
+          <tr><td><span class="mono">POST</span></td><td class="mono">/api/v1/chat</td><td>账单问答：混合检索 → 生成回答</td><td><b>RAG + LLM</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>关键接口示例：语音解析（parse）</h3>
+<pre class="code"><span class="cm"># POST /api/v1/bills/parse</span>
+<span class="cm"># 请求</span>
+{ <span class="str">"text"</span>: <span class="str">"中午和同事吃了顿火锅 87 块"</span> }
+
+<span class="cm"># 响应：结构化草稿（前端展示给用户确认）</span>
+{
+  <span class="str">"amount"</span>: 87.00,
+  <span class="str">"category"</span>: <span class="str">"餐饮"</span>,
+  <span class="str">"sub_category"</span>: <span class="str">"火锅"</span>,
+  <span class="str">"description"</span>: <span class="str">"中午和同事吃火锅"</span>,
+  <span class="str">"bill_time"</span>: <span class="str">"2026-09-21T13:30:00+08:00"</span>,
+  <span class="str">"confidence"</span>: <span class="num">0.92</span>,
+  <span class="str">"warnings"</span>: []
+}</pre>
+
+    <h3>关键接口示例：账单问答（chat）</h3>
+<pre class="code"><span class="cm"># POST /api/v1/chat</span>
+{ <span class="str">"question"</span>: <span class="str">"上个月我奶茶一共花了多少？"</span> }
+
+<span class="cm"># 响应</span>
+{
+  <span class="str">"answer"</span>: <span class="str">"8 月你共有 14 笔奶茶类消费，合计 186.50 元，占餐饮总支出的 12%。单笔最高 22 元（8-16 某茶），建议关注下午茶频次。"</span>,
+  <span class="str">"sources"</span>: [{ <span class="str">"type"</span>: <span class="str">"sql"</span>, <span class="str">"hits"</span>: <span class="num">14</span> }],
+  <span class="str">"caveat"</span>: <span class="str">"基于 8 月 1 日–31 日账单"</span>
+}</pre>
+
+    <div class="callout callout-tip"><p><strong>接口设计要点</strong>：① parse/ocr 与 create 分离——AI 只产出草稿，入库在用户确认后，防幻觉金额；② 分类在创建时同步调用便宜模型（延迟可接受，失败走规则兜底）；③ 所有响应带 <span class="mono">caveat/confidence</span>，AI 结论可追溯，这是工程严谨性的直接体现。</p></div>
+  </div>
+</section>
+
+<!-- ================= 08 核心 AI 设计 ================= -->
+<section class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-no">08</span>
+    <h2 class="sec-title">核心 AI 设计</h2>
+    <span class="sec-lead">4 套 Prompt · 防幻觉 · 混合检索 · 降级</span>
+  </div>
+  <div class="sec-body">
+
+    <h3>8.1 分类引擎（最高频调用，成本敏感）</h3>
+    <p>设计目标：便宜、快、稳定。用 DeepSeek 便宜档模型 + <strong>固定枚举约束 + JSON 输出 + 规则兜底</strong>。</p>
+<pre class="code"><span class="cm"># system：</span>
+你是账单分类助手。将消费描述归入以下类别之一：
+餐饮/交通/购物/居住/娱乐/医疗/教育/人情/旅行/投资/转账/其他。
+只输出 JSON：{"category": "餐饮", "sub_category": "咖啡", "confidence": 0.95}
+
+<span class="cm"># few-shot：</span>
+用户：瑞幸拿铁大杯 19.9    → {"category":"餐饮","sub_category":"咖啡","confidence":0.98}
+用户：滴滴快车 12.5        → {"category":"交通","sub_category":"打车","confidence":0.97}
+用户：给爸妈转账 5000      → {"category":"人情","sub_category":"赡养","confidence":0.9}
+
+<span class="cm"># 后端校验（Pydantic）：</span>
+1. 校验 category ∈ 枚举，否则 <span class="kw">重试 1 次</span>（提示错误类别）
+2. 仍失败 → <span class="kw">规则兜底</span>：关键词表匹配（"咖啡/奶茶/外卖"→餐饮）
+3. confidence &lt; 0.6 → 前端标记"待确认"</pre>
+
+    <h3>8.2 语音/文本解析（金额防幻觉是核心）</h3>
+    <p>语音转文字后，LLM 要把一句口语拆成结构化字段。<strong>金额是钱，绝对不能幻觉</strong>——为此做了三道防线：</p>
+    <ol>
+      <li><strong>正则优先</strong>：先从原文提取所有数字候选（"87"、"87块"），作为候选金额传给 LLM，并要求"必须从候选中选择"。</li>
+      <li><strong>交叉校验</strong>：LLM 输出的金额若不在候选数字中，拒绝本次解析并重试一次。</li>
+      <li><strong>用户确认</strong>：草稿页金额高亮展示，用户可一键修改。</li>
+    </ol>
+
+    <h3>8.3 月度洞察（防编造数字）</h3>
+    <p>LLM 生成"洞察结论"时容易编造数据。方案：<strong>后端先算好聚合事实，LLM 只负责解读事实，且要求每条洞察必须引用给定数字，后端校验引用一致才落库。</strong></p>
+<pre class="code"><span class="cm"># 喂给 LLM 的聚合事实（后端算好，真实数据）：</span>
+{ "month": "2026-08", "total": 4862.5, "top_categories": [
+  {"餐饮": 1520.0, "占比": "31%"}, {"居住": 1200.0, "占比": "25%"} ],
+  "mom_change": { "餐饮": "+18%", "total": "+6%" },
+  "anomalies": ["订阅类支出连续 3 个月上涨"] }
+
+<span class="cm"># 要求：</span>
+输出 3-5 条洞察，每条必须引用上述数字，格式：
+{"insight": "…", "evidence": "餐饮支出 1520 元，占 31%，环比 +18%"}
+<span class="cm"># 后端校验：evidence 中的数字必须与聚合事实一致，不一致则丢弃该条</span></pre>
+
+    <h3>8.4 账单问答：混合检索（全项目最亮的技术点）</h3>
+    <p>账单是"结构化 + 文本"混合数据。纯 RAG 回答不了"奶茶一共花多少"（需要聚合）；纯 SQL 回答不了"上次那家特别好吃的日料店"（需要语义）。所以两路并行：</p>
+    <div style="margin:16px 0;border:1px solid var(--line-soft);border-radius:12px;overflow:hidden;">
+      <div style="background:#0f172a;color:#cbd5e1;padding:10px 16px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;">chat 服务 · 混合检索流程（示意）</div>
+      <div style="background:#fff;padding:16px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;">
+          <div style="border:1px solid var(--line);border-radius:7px;padding:6px 10px;background:#fbfcfd;color:var(--ink);"><b>用户问题</b></div>
+          <div style="color:var(--ink-3);">→</div>
+          <div style="border:1px solid #bfdbfe;background:var(--blue-soft);border-radius:7px;padding:6px 10px;color:#1e40af;"><b>意图路由</b>（LLM 判断）</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+          <div style="flex:1;min-width:230px;border:1px solid #bfdbfe;border-radius:8px;padding:10px;background:#f7faff;">
+            <div style="font-weight:700;font-size:12.5px;color:#1e40af;margin-bottom:6px;">A 路 · 结构化查询（函数调用）</div>
+            <div style="font-size:12px;color:#334155;line-height:1.7;">LLM 转成 JSON 查询条件 {time_range, category, amount_gt/lt, group_by} → SQL 聚合 → 拿到精确数字</div>
+          </div>
+          <div style="flex:1;min-width:230px;border:1px solid #bfe6e0;border-radius:8px;padding:10px;background:#f4faf8;">
+            <div style="font-weight:700;font-size:12.5px;color:#0b7a6e;margin-bottom:6px;">B 路 · 语义检索（向量）</div>
+            <div style="font-size:12px;color:#334155;line-height:1.7;">问题 embedding → pgvector HNSW 召回 top-k 相似描述 → 带出对应账单记录</div>
+          </div>
+        </div>
+        <div style="text-align:center;color:var(--ink-3);font-size:18px;padding:4px 0;">↓</div>
+        <div style="border:1px solid var(--line);border-radius:7px;padding:6px 10px;background:#fbfcfd;font-size:12.5px;color:var(--ink);"><b>合并两路证据 → LLM 生成回答（带来源标注 + caveat）</b></div>
+      </div>
+    </div>
+    <p>面试讲这个架构时，顺带说明两个工程细节：<strong>路由策略</strong>（聚合类问题走 A 路、回忆类问题走 B 路、复杂问题两路都要）和<strong>失败降级</strong>（向量库挂了 → 纯 SQL；embedding 失败 → pg_trgm 关键词模糊检索）。</p>
+
+    <h3>8.5 成本与降级总览</h3>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:24%"><col style="width:38%"><col style="width:38%"></colgroup>
+        <thead><tr><th>环节</th><th>成本控制</th><th>故障降级</th></tr></thead>
+        <tbody>
+          <tr><td>分类</td><td>便宜模型 + 相同描述缓存分类结果（Redis 或内存 Map）</td><td>LLM 失败 → 关键词规则分类</td></tr>
+          <tr><td>解析 / 问答</td><td>输入截断（超长文本切片）+ 非高峰不重试</td><td>解析失败 → 提示手动输入</td></tr>
+          <tr><td>月报</td><td>结果落库缓存，同月不重复调用</td><td>洞察失败 → 只展示聚合图表，不展示 AI 文字</td></tr>
+          <tr><td>OCR</td><td>免费额度内使用，超限提示手输</td><td>OCR 失败 → 提示重拍或手输</td></tr>
+          <tr><td>Embedding</td><td>入库时一次性生成，批量写入</td><td>失败 → 问答降级为关键词检索</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 09 分阶段排期 ================= -->
+<section class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-no">09</span>
+    <h2 class="sec-title">分阶段排期</h2>
+    <span class="sec-lead">5–6 周 · 每阶段有交付物与验收标准</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="timeline">
+      <div class="tl-row">
+        <div class="tl-time">第 0 阶段<br>3–4 天</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <b>地基：环境 + 登录闭环</b>
+          <span class="tl-tag">交付物：可登录的"Hello 账单"小程序 + FastAPI 骨架 + 数据库就绪</span>
+          <ul>
+            <li>注册小程序账号（个人主体即可），拿 AppID；微信开发者工具建 TS 模板项目</li>
+            <li>FastAPI 项目骨架：配置、日志、健康检查、Alembic 初始化、pgvector 扩展</li>
+            <li>微信登录：code2session → openid → JWT → 前端存储</li>
+            <li>开通腾讯云 OCR、注册 DeepSeek key（各充 ¥10 足够开发期）</li>
+          </ul>
+          <span class="tl-tag">验收：登录后能看到空账单页，后端 /api/v1/auth/login 打通</span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">第 1 阶段<br>1 周</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <b>手动记账 MVP（不接 AI）</b>
+          <span class="tl-tag">交付物：完整记账 CRUD + 分类（先用规则关键词版）+ 列表筛选</span>
+          <ul>
+            <li>bills 表 + CRUD 接口 + Pydantic 校验 + 单元测试</li>
+            <li>小程序：首页记账表单、账单列表（月份/类别筛选、下拉分页）、编辑删除</li>
+            <li>分类先用关键词规则表顶住，为第 2 阶段 AI 替换留接口</li>
+          </ul>
+          <span class="tl-tag">验收：手动记账全流程走通，数据落库可查可改；面试考点=后端 CRUD + 数据库设计</span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">第 2 阶段<br>1 周</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <b>AI 化：分类 + 语音/文本解析</b>
+          <span class="tl-tag">交付物：AI 分类引擎 + parse 接口 + 两段式确认流</span>
+          <ul>
+            <li>DeepSeek 客户端：超时、重试、异常处理（services/llm.py）</li>
+            <li>分类 Prompt（few-shot + JSON）+ Pydantic 校验 + 规则兜底 + 缓存</li>
+            <li>parse 接口：金额正则优先 + LLM 解析 + 交叉校验（防幻觉）</li>
+            <li>前端草稿态：AI 结果可编辑、确认后入库</li>
+          </ul>
+          <span class="tl-tag">验收：手输/粘贴一段话能出正确草稿，金额错误率为 0（校验拦截）；面试考点=Prompt 工程 + 结构化输出 + 防幻觉</span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">第 3 阶段<br>1 周</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <b>多模态：语音 + 拍照记账</b>
+          <span class="tl-tag">交付物：语音记账、拍照记账全链路</span>
+          <ul>
+            <li>接入微信同声传译插件：长按说话 → 文字 → parse</li>
+            <li>ocr 接口：小程序上传图片 → 腾讯云 OCR → 字段清洗 → parse 补全分类</li>
+            <li>OCR 结果置信度低时引导用户修改，保证"识别错也不入库错"</li>
+          </ul>
+          <span class="tl-tag">验收：说一句"中午和同事吃火锅 87 块"和拍一张小票都能入库；面试考点=多模态接入 + 不可靠外部依赖的处理</span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">第 4 阶段<br>1.5 周</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <b>洞察 + 问答彩蛋（RAG）</b>
+          <span class="tl-tag">交付物：月度洞察报告 + 账单问答</span>
+          <ul>
+            <li>月报聚合接口 + LLM 洞察（防编造校验）+ 落库缓存</li>
+            <li>ECharts：月度支出趋势、分类占比、Top 商户</li>
+            <li>账单问答：BGE-M3 入库向量 → 混合检索（函数调用 SQL + HNSW 向量召回）→ 生成回答</li>
+          </ul>
+          <span class="tl-tag">验收：demo 数据下"上月奶茶花了多少""那家日料店叫啥"都能答对；面试考点=RAG + 混合检索 + 向量库选型</span>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-time">第 5 阶段<br>1 周</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <b>打磨 + 面试材料</b>
+          <span class="tl-tag">交付物：可演示版本 + 面试话术包</span>
+          <ul>
+            <li>造一套真实感 demo 数据（3 个月、300+ 条），保证演示效果</li>
+            <li>部署到轻量服务器，小程序配合法域名，真机演示</li>
+            <li>写 30 秒介绍 + 3 分钟演示脚本 + 追问 FAQ（见第 10 章）</li>
+          </ul>
+          <span class="tl-tag">验收：脱稿演示全流程 3 分钟不卡壳；面试考点=工程完整度 + 表达</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-warn"><p><strong>节奏建议</strong>：第 2、4 阶段是面试含金量最高的两周，值得多花时间把"为什么这么设计"想透；第 1、3 阶段是纯工程量，可加快。时间不足时的砍法：第 4 阶段问答彩蛋先降级为"规则问答"（时间/类别/金额条件查询），RAG 后补——但排期正常时一定要上 RAG。</p></div>
+  </div>
+</section>
+
+<!-- ================= 10 面试准备 ================= -->
+<section class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-no">10</span>
+    <h2 class="sec-title">面试准备</h2>
+    <span class="sec-lead">话术 · 演示脚本 · 追问 FAQ</span>
+  </div>
+  <div class="sec-body">
+
+    <h3>30 秒电梯介绍</h3>
+    <div class="callout callout-tip"><p>"我做了一个叫 OneBill 的 AI 记账小程序。核心是让 AI 当你的 CFO：语音和拍照就能记账，AI 自动分类，每月生成一份带数据依据的消费洞察；最特别的是一个 RAG 问答功能，你可以直接问'上个月奶茶花了多少'，它通过混合检索——结构化查询加语义召回——给你带证据的答案。整个项目从多模态入口到后端架构到检索链路都是我自己从零搭的。"</p></div>
+
+    <h3>3 分钟演示脚本</h3>
+    <ol>
+      <li><strong>开场（20s）</strong>：打开小程序，展示首页三个入口（语音/拍照/手动），一句话说明定位。</li>
+      <li><strong>语音记账（40s）</strong>：长按说"中午和同事吃了顿火锅 87 块"→ 展示草稿解析（金额/类别/描述都对了）→ 确认入库。强调"金额防幻觉"设计。</li>
+      <li><strong>拍照记账（40s）</strong>：拍一张提前准备的小票 → OCR 出结构化字段 → 展示清洗结果。强调"识别错不入库"。</li>
+      <li><strong>月度洞察（40s）</strong>：打开上月报告 → ECharts 图表 + AI 结论卡片，指出某条洞察并说"这条的数字是后端聚合算出来的，LLM 只解读、不能编"。</li>
+      <li><strong>账单问答（40s）</strong>：问"上月奶茶花了多少"→ 展示带来源的回答；再问一个语义问题（"那家日料店叫什么"）→ 展示向量召回。收尾："这就是混合检索，纯 SQL 或纯 RAG 都做不到。"</li>
+    </ol>
+
+    <h3>高频追问 FAQ（先自己想一遍答案）</h3>
+    <details class="faq"><summary>为什么自建后端，不用微信云开发的 AI 全家桶？</summary><div class="faq-body"><p>云开发能更快跑通，但它把模型调用、Agent、向量检索都封装成了配置项——面试要展示的是系统设计能力，自建让我能把 Prompt 工程、降级链、成本控制每一个决策讲清楚。平台能力我用了该用的部分（语音、OCR 免费通道），技术含金量部分留给自己。</p></div></details>
+    <details class="faq"><summary>分类准确率怎么保证？如果 LLM 乱分类怎么办？</summary><div class="faq-body"><p>三层：固定枚举约束 + few-shot 示例约束输出空间；Pydantic 校验类别合法性，非法则带错误提示重试一次；仍失败走关键词规则兜底。另外置信度低于阈值的结果前端标"待确认"，把最终决定权留给用户——准确率不可能 100%，设计上允许纠错。</p></div></details>
+    <details class="faq"><summary>为什么账单问答用混合检索，而不是纯 RAG？</summary><div class="faq-body"><p>账单是结构化 + 文本混合数据。聚合类问题（"奶茶花了多少"）需要 SQL 按类别求和，纯向量检索答不了；回忆类问题（"那家日料店叫啥"）关键词拼不准，纯 SQL 答不了。所以 LLM 先路由意图，聚合问题走函数调用转 SQL，语义问题走向量召回，复杂问题两路证据合并，最后统一生成带来源的回答。</p></div></details>
+    <details class="faq"><summary>向量库为什么选 pgvector，不用专门向量数据库？</summary><div class="faq-body"><p>项目规模下，专门向量库是多余的服务和运维成本，还引入与主库的一致性同步问题。pgvector 让结构化数据和向量同库、同事务，账单增删改时向量通过级联保持一致，一套 PostgreSQL 解决。等数据量到百万级再评估迁专门向量库。</p></div></details>
+    <details class="faq"><summary>怎么防止 LLM 编造金额和报告数字？</summary><div class="faq-body"><p>三类手段：金额——正则先从原文提取数字候选，要求 LLM 必须从候选中选，输出不在候选内就拒绝重试，再加上用户确认；报告——后端先算聚合事实，LLM 只能引用给定数字，后端校验引用一致性，不一致丢弃；问答——回答必须带 sources 和 caveat，可追溯。</p></div></details>
+    <details class="faq"><summary>成本怎么控制的？</summary><div class="faq-body"><p>分类是最高频调用，用便宜模型 + 相同描述缓存分类结果；月报结果落库，同月不重复生成；输入截断控制 token；OCR 和语音走免费额度。演示规模一个月不到几块钱。</p></div></details>
+    <details class="faq"><summary>用户量大了怎么扩展？</summary><div class="faq-body"><p>当前架构的水平扩展路径：FastAPI 无状态可横向扩容 + 负载均衡；分类缓存升级为 Redis；月报生成改为异步任务队列；pgvector 到瓶颈后，向量检索拆到专用向量库或只读从库。这些都是标准演进路线，我在代码里留了接口抽象。</p></div></details>
+    <details class="faq"><summary>账单是敏感数据，安全合规怎么考虑？</summary><div class="faq-body"><p>openid 即身份、JWT 鉴权、所有查询强制按 user_id 隔离；不落明文敏感信息；提供数据导出和注销即删；小程序隐私协议里明确数据用途。个人信息保护法对财务数据的处理要求是面试官可能追问的点。</p></div></details>
+
+    <h3>硬核细节清单（面试主动抛的 10 个决策）</h3>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:34%"><col style="width:66%"></colgroup>
+        <thead><tr><th>技术决策</th><th>一句话理由</th></tr></thead>
+        <tbody>
+          <tr><td>parse 与 create 分离</td><td>AI 只产草稿、用户确认才入库——防幻觉且提升信任</td></tr>
+          <tr><td>分类用便宜模型 + 缓存</td><td>高频调用场景的成本工程，量价分离的典型思路</td></tr>
+          <tr><td>金额正则优先 + 候选约束</td><td>关键数值不交给 LLM 自由生成，宁缺勿错</td></tr>
+          <tr><td>报告"聚合先行、LLM 解读"</td><td>事实与语言分离，杜绝 AI 编数据</td></tr>
+          <tr><td>混合检索两路合并</td><td>结构化 + 语义各司其职，覆盖两类问题</td></tr>
+          <tr><td>pgvector 同库承载向量</td><td>少一个服务、多一份事务一致性</td></tr>
+          <tr><td>bills 与 bill_vectors 分表</td><td>主表瘦身、向量可独立重建、级联保证一致</td></tr>
+          <tr><td>OCR/语音走官方免费通道</td><td>平台红利吃满，钱和运维花在刀刃上</td></tr>
+          <tr><td>每层都有降级路径</td><td>AI 服务不稳定是常态，系统要优雅降级而非报错</td></tr>
+          <tr><td>回答必带 sources/caveat</td><td>AI 结论可追溯，产品可信度设计</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 11 风险与预案 ================= -->
+<section class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-no">11</span>
+    <h2 class="sec-title">风险与预案</h2>
+    <span class="sec-lead">每个翻车点都有退路</span>
+  </div>
+  <div class="sec-body">
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <colgroup><col style="width:24%"><col style="width:32%"><col style="width:22%"><col style="width:22%"></colgroup>
+        <thead><tr><th>风险</th><th>表现</th><th>概率</th><th>预案</th></tr></thead>
+        <tbody>
+          <tr><td><b>OCR 识别不准</b></td><td>小票模糊/反光，金额类别错</td><td>中</td><td>字段清洗 + 置信度提示 + 强制人工核对；演示用小票提前验证</td></tr>
+          <tr><td><b>LLM 分类乱 / 解析错</b></td><td>类别越界、金额幻觉</td><td>低</td><td>枚举约束 + 重试 + 规则兜底 + 金额候选校验（8.1/8.2 已内建）</td></tr>
+          <tr><td><b>向量检索召回差</b></td><td>问"日料店"答不出</td><td>中</td><td>混合检索兜底（SQL 也能查）；调 embedding 模型 / 补充同义词</td></tr>
+          <tr><td><b>时间不够</b></td><td>排期超时</td><td>中</td><td>砍 P2；问答彩蛋先降级为规则问答，RAG 后补</td></tr>
+          <tr><td><b>小程序审核不过</b></td><td>类目/隐私问题驳回</td><td>低</td><td>选"工具-效率"类目；隐私协议写清数据用途；先用体验版演示</td></tr>
+          <tr><td><b>API 额度/费用异常</b></td><td>key 被盗刷或超限</td><td>低</td><td>key 只放后端环境变量；设用量告警；OCR 免费额度超限提示手输</td></tr>
+          <tr><td><b>演示环境故障</b></td><td>现场服务器/网络出问题</td><td>低</td><td>准备本地兜底环境 + 截图录屏素材，演示不依赖单一通道</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 12 今日行动清单 ================= -->
+<section class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-no">12</span>
+    <h2 class="sec-title">今日行动清单</h2>
+    <span class="sec-lead">现在就做这 6 件事</span>
+  </div>
+  <div class="sec-body">
+    <ul class="checklist">
+      <li><b>确认小程序账号</b>：注册或确认已有小程序（个人主体即可），拿到 AppID——这是唯一无法当天自助完成的事，先启动</li>
+      <li><b>创建 DeepSeek API key</b>：控制台充值少量金额（开发期 ¥10 足够），key 只存后端 .env</li>
+      <li><b>开通腾讯云 OCR</b>：开通"通用票据识别（高级版）"，确认 1000 次/月免费额度生效</li>
+      <li><b>本地装 PostgreSQL 16</b>：并执行 <span class="mono">CREATE EXTENSION vector</span> 验证 pgvector 可用</li>
+      <li><b>初始化项目骨架</b>：微信开发者工具建 TS 模板 + FastAPI hello world + Alembic 初始化</li>
+      <li><b>建 README 与需求备忘</b>：把本文档关键决策复制进项目 README，开发中随时对照</li>
+    </ul>
+    <div class="callout callout-info"><p><strong>建议节奏</strong>：前 3 项今天 30 分钟搞定；第 4、5 项是阶段 0 的起点。做完这 6 项，本周就能进入第 1 阶段的记账 CRUD。</p></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <span>OneBill AI · 面试项目落地手册 v1.0</span>
+    <span>2026-09 编制 · 面向 AI 应用工程师岗位</span>
+  </div>
+</footer>
+
+<button id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="返回顶部">↑</button>
+
+<script>
+(function(){
+  var btn=document.getElementById('toTop');
+  window.addEventListener('scroll',function(){
+    if(window.scrollY>600){btn.classList.add('show');}else{btn.classList.remove('show');}
+  },{passive:true});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<view class="page">
+  <!-- 顶部：当月支出大数字 -->
+  <view class="month-hero">
+    <view class="month-label">
+      <text>{{monthLabel}}支出</text>
+      <text class="month-count" wx:if="{{!loadingAmount && !amountError}}"> · {{monthCount}}笔</text>
+    </view>
+    <view class="month-amount" wx:if="{{!loadingAmount && !amountError}}">¥{{monthTotal}}</view>
+    <view class="month-amount skeleton" wx:elif="{{loadingAmount}}">····</view>
+    <view class="month-amount-error" wx:else bindtap="onRetryAmount">金额加载失败，点我重试</view>
+  </view>
+
+  <!-- 加载中：小韭菜抱账本 -->
+  <view class="loading-block" wx:if="{{reportLoading}}">
+    <image class="loading-img" src="{{mascotThinking}}" mode="aspectFit" />
+    <view class="loading-title">菜菜正在翻账本…</view>
+    <view class="loading-desc">看看这月刀口在哪</view>
+  </view>
+
+  <!-- AI 复盘文字卡片（markdown） -->
+  <block wx:else>
+    <view class="report-card">
+      <view class="report-card-head">
+        <image class="report-card-avatar" src="{{mascotThinking}}" mode="aspectFit" />
+        <view class="report-card-label">菜菜复盘</view>
+      </view>
+      <view class="report-card-body">
+        <text class="report-plain" wx:if="{{reportPlain}}">{{reportSummary}}</text>
+        <mp-html
+          wx:else
+          content="{{reportHtml}}"
+          tag-style="{{reportTagStyle}}"
+          container-style="{{reportContainerStyle}}"
+          bind:error="onReportMdError"
+        />
+      </view>
+    </view>
+
+    <view class="footer">
+      <button
+        class="btn-ghost btn-block"
+        hover-class="btn-hover-ghost"
+        bindtap="onRegenReport"
+      >重新生成</button>
+    </view>
+  </block>
+</view>

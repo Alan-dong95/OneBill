@@ -1,0 +1,51 @@
+<view class="page">
+  <view class="card">
+    <view class="title">意见反馈</view>
+    <view class="hint">刀口不对？功能不够？协会听着。</view>
+
+    <textarea
+      class="textarea"
+      placeholder="告诉小韭菜哪里不好用，或者想要什么功能..."
+      placeholder-class="ph"
+      maxlength="2000"
+      value="{{content}}"
+      auto-height
+      bindinput="onContentInput"
+    />
+
+    <view class="label">截图（选填，最多 3 张）</view>
+    <view class="image-row">
+      <view class="image-item" wx:for="{{images}}" wx:key="index">
+        <image class="thumb" src="{{item}}" mode="aspectFill" />
+        <view class="image-remove" data-index="{{index}}" catchtap="onRemoveImage">×</view>
+      </view>
+      <view
+        class="image-add"
+        wx:if="{{images.length < 3}}"
+        hover-class="image-add-hover"
+        bindtap="onAddImage"
+      >
+        <text class="image-add-plus">+</text>
+        <text class="image-add-text">上传截图</text>
+      </view>
+    </view>
+
+    <view class="label">联系方式（选填）</view>
+    <input
+      class="contact-input"
+      maxlength="64"
+      value="{{contact}}"
+      placeholder="留个微信/邮箱，方便我们联系你"
+      placeholder-class="ph"
+      bindinput="onContactInput"
+    />
+  </view>
+
+  <button
+    class="btn-primary btn-block submit-btn"
+    hover-class="btn-hover"
+    loading="{{submitting}}"
+    disabled="{{submitting}}"
+    bindtap="onSubmit"
+  >提交</button>
+</view>

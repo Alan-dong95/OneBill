@@ -1,0 +1,156 @@
+<view class="page">
+  <!-- 月份筛选 + 关键词搜索 -->
+  <view class="month-bar">
+    <picker
+      mode="date"
+      fields="month"
+      value="{{monthPickerValue}}"
+      end="{{monthPickerEnd}}"
+      bindchange="onMonthChange"
+    >
+      <view class="month-picker">
+        <text>{{monthLabel}}</text>
+        <text class="month-picker-arrow">▾</text>
+      </view>
+    </picker>
+    <view
+      class="month-clear {{filterMonth ? '' : 'month-clear-off'}}"
+      bindtap="onClearMonth"
+    >清空</view>
+    <view class="search-box">
+      <input
+        class="search-input"
+        type="text"
+        confirm-type="search"
+        placeholder="搜备注 / 分类"
+        placeholder-class="search-placeholder"
+        value="{{keyword}}"
+        bindinput="onKeywordInput"
+      />
+      <view
+        class="search-clear {{keyword ? '' : 'search-clear-off'}}"
+        catchtap="onClearKeyword"
+      >×</view>
+    </view>
+  </view>
+
+  <!-- 统计页入口 -->
+  <view
+    class="stats-entry"
+    hover-class="stats-entry-hover"
+    bindtap="goStats"
+    wx:if="{{!loading && !loadError}}"
+  >
+    <text class="stats-entry-text">📊 看看你的钱被谁割了 →</text>
+  </view>
+
+  <!-- 图表区：本月分类（近 7 天已迁到统计页） -->
+  <view class="charts" wx:if="{{!loading && !loadError}}">
+    <view class="chart-card">
+      <view class="chart-title">本月支出分布</view>
+      <view class="chart-body" wx:if="{{!pieEmpty}}">
+        <ec-canvas id="chart-pie" canvas-id="chart-pie" ec="{{ ecPie }}"></ec-canvas>
+      </view>
+      <view class="chart-empty" wx:else>还没数据</view>
+    </view>
+  </view>
+
+  <view class="toolbar" wx:if="{{!loading && !loadError && !empty}}">
+    <text class="toolbar-text">{{listSummary}}</text>
+    <text class="toolbar-hint">左滑可编辑 / 删除</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="state">加载中…</view>
+
+  <view wx:elif="{{loadError}}" class="empty">
+    <image class="empty-mascot" src="{{mascotStand}}" mode="aspectFit" />
+    <view class="empty-title">账单这会儿翻不开</view>
+    <view class="empty-desc">不是账本空了，是网络卡了一下</view>
+    <button class="btn-primary btn-md empty-btn" hover-class="btn-hover" bindtap="onRetry">再试一次</button>
+  </view>
+
+  <view wx:elif="{{empty}}" class="empty">
+    <image class="empty-mascot" src="{{mascotStand}}" mode="aspectFit" />
+    <view class="empty-title">{{searching ? '没搜到相关账单' : (filterMonth ? '这月账本空空' : '账本还是空的')}}</view>
+    <view class="empty-desc">{{searching ? '换个词试试，或清空搜索' : (filterMonth ? '换个月看看，或去记一笔' : '记一笔，护住你的钱包')}}</view>
+    <button
+      wx:if="{{!searching}}"
+      class="btn-primary btn-md empty-btn"
+      hover-class="btn-hover"
+      bindtap="goAdd"
+    >去记一笔</button>
+  </view>
+
+  <view wx:else class="groups">
+    <view class="group" wx:for="{{groups}}" wx:for-index="gi" wx:key="key">
+      <view class="group-head">
+        <text class="group-title">{{item.title}}</text>
+        <text class="group-total">¥{{item.dayTotal}}</text>
+      </view>
+      <view class="bill-list">
+        <movable-area
+          class="swipe-area {{ii > 0 ? 'with-divider' : ''}}"
+          wx:for="{{item.items}}"
+          wx:for-item="bill"
+          wx:for-index="ii"
+          wx:key="id"
+          style="width: {{listWidth}}px; height: {{rowHeight}}px;"
+        >
+          <movable-view
+            class="swipe-view"
+            style="width: {{mainWidth + actionWidth}}px; height: {{rowHeight}}px;"
+            direction="horizontal"
+            inertia="{{false}}"
+            out-of-bounds="{{true}}"
+            damping="40"
+            animation="{{true}}"
+            x="{{bill.x}}"
+            data-id="{{bill.id}}"
+            data-gi="{{gi}}"
+            data-ii="{{ii}}"
+            bindchange="onSwipeChange"
+            bindtouchstart="onSwipeStart"
+            bindtouchend="onSwipeEnd"
+            bindtouchcancel="onSwipeEnd"
+          >
+            <view
+              class="swipe-main"
+              style="width: {{mainWidth}}px;"
+              data-id="{{bill.id}}"
+              data-gi="{{gi}}"
+              data-ii="{{ii}}"
+              bindtap="onBillTap"
+              bindlongpress="onBillLongPress"
+            >
+              <view class="bill-icon">{{bill.icon}}</view>
+              <view class="bill-left">
+                <view class="bill-category">{{bill.category}}</view>
+                <view class="bill-meta">
+                  <text class="bill-desc">{{bill.description}}</text>
+                  <text class="bill-dot">·</text>
+                  <text class="bill-time">{{bill.time}}</text>
+                </view>
+              </view>
+              <view class="bill-amount">-¥{{bill.amountText}}</view>
+            </view>
+            <view class="swipe-actions" style="width: {{actionWidth}}px;">
+              <view
+                class="swipe-edit"
+                catchtap="onEditTap"
+                data-id="{{bill.id}}"
+              >编辑</view>
+              <view
+                class="swipe-delete"
+                catchtap="onDeleteTap"
+                data-id="{{bill.id}}"
+              >删除</view>
+            </view>
+          </movable-view>
+        </movable-area>
+      </view>
+    </view>
+
+    <view class="list-footer" wx:if="{{loadingMore}}">加载中…</view>
+    <view class="list-footer" wx:elif="{{!hasMore && totalCount > 0}}">没有更多了</view>
+  </view>
+</view>

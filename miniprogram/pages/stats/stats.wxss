@@ -1,0 +1,208 @@
+.page {
+  padding: 24rpx 32rpx 48rpx;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.header-title {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #1a2e1f;
+  letter-spacing: 1rpx;
+  line-height: 1.3;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+/* 月度 | 年度 分段切换 */
+.mode-switch {
+  display: flex;
+  align-items: center;
+  padding: 4rpx;
+  border-radius: 999rpx;
+  background: #eef5f0;
+  border: 2rpx solid #d8eeda;
+  flex-shrink: 0;
+}
+
+.mode-item {
+  padding: 10rpx 22rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  color: #5a6b5e;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.mode-item-on {
+  background: #1a2e1f;
+  color: #fff;
+}
+
+.month-picker {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 999rpx;
+  background: #fff;
+  border: 2rpx solid #d8eeda;
+  font-size: 24rpx;
+  color: #2a4a32;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.month-picker-arrow {
+  font-size: 20rpx;
+  color: #9aab9e;
+}
+
+.state {
+  text-align: center;
+  color: #9aab9e;
+  padding: 160rpx 0;
+  font-size: 26rpx;
+}
+
+/* 深色大数字卡片（与首页风格一致） */
+.month-card {
+  background: linear-gradient(145deg, #1a2e1f 0%, #2a4a32 100%);
+  border-radius: 28rpx;
+  padding: 32rpx 32rpx 36rpx;
+  box-shadow: 0 12rpx 32rpx rgba(26, 46, 31, 0.18);
+  margin-bottom: 20rpx;
+}
+
+.month-label {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 24rpx;
+}
+
+.month-count {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.month-amount {
+  margin-top: 12rpx;
+  color: #2ecc71;
+  font-size: 68rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+  line-height: 1.2;
+}
+
+.month-amount.empty-hint {
+  font-size: 36rpx;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 600;
+}
+
+.empty-block {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 48rpx 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #9aab9e;
+  margin-bottom: 28rpx;
+}
+
+.empty-btn {
+  width: 280rpx;
+}
+
+/* 图表卡片 */
+.chart-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 28rpx 16rpx 16rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+}
+
+.chart-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1a2e1f;
+  padding: 0 12rpx 8rpx;
+}
+
+.chart-body {
+  width: 100%;
+  height: 360rpx;
+  overflow: hidden;
+}
+
+.chart-body-pie {
+  height: 400rpx;
+}
+
+.chart-body ec-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.chart-empty {
+  height: 280rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  color: #b5c4b8;
+}
+
+/* 小韭菜点评 */
+.comment-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 28rpx 28rpx 32rpx;
+  border: 2rpx solid #d8eeda;
+}
+
+.comment-head {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-bottom: 16rpx;
+}
+
+.comment-avatar {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #e8f6ec;
+  flex-shrink: 0;
+}
+
+.comment-label {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1a2e1f;
+}
+
+.comment-body {
+  font-size: 28rpx;
+  line-height: 1.7;
+  color: #5a6b5e;
+}

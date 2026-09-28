@@ -1,0 +1,121 @@
+<view class="page">
+  <!-- 顶部：标题 + 月度/年度切换 + 时间选择 -->
+  <view class="header">
+    <view class="header-title">韭菜保护协会统计报表</view>
+    <view class="header-actions">
+      <view class="mode-switch">
+        <view
+          class="mode-item {{mode === 'month' ? 'mode-item-on' : ''}}"
+          data-mode="month"
+          bindtap="onModeChange"
+        >月度</view>
+        <view
+          class="mode-item {{mode === 'year' ? 'mode-item-on' : ''}}"
+          data-mode="year"
+          bindtap="onModeChange"
+        >年度</view>
+      </view>
+
+      <!-- 月度：选月 -->
+      <picker
+        wx:if="{{!isYearMode}}"
+        mode="date"
+        fields="month"
+        value="{{monthValue}}"
+        end="{{monthEnd}}"
+        bindchange="onMonthChange"
+      >
+        <view class="month-picker">
+          <text>{{periodLabel}}</text>
+          <text class="month-picker-arrow">▾</text>
+        </view>
+      </picker>
+
+      <!-- 年度：选年 -->
+      <picker
+        wx:else
+        mode="date"
+        fields="year"
+        value="{{yearValue}}"
+        end="{{yearEnd}}"
+        bindchange="onYearChange"
+      >
+        <view class="month-picker">
+          <text>{{periodLabel}}</text>
+          <text class="month-picker-arrow">▾</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="state">加载中…</view>
+
+  <block wx:else>
+    <!-- 支出大数字卡片 -->
+    <view class="month-card">
+      <view class="month-label">
+        <text>{{heroLabel}}</text>
+        <text class="month-count"> · {{count}}笔</text>
+      </view>
+      <view class="month-amount" wx:if="{{!empty}}">¥{{totalText}}</view>
+      <view class="month-amount empty-hint" wx:else>{{emptyHint}}</view>
+    </view>
+
+    <!-- 空状态提示 -->
+    <view class="empty-block" wx:if="{{empty}}">
+      <view class="empty-desc">{{emptyDesc}}</view>
+      <button class="btn-primary btn-md empty-btn" hover-class="btn-hover" bindtap="goAdd">去记一笔</button>
+    </view>
+
+    <!-- 分类占比：有数据才画 -->
+    <view class="chart-card" wx:if="{{!empty}}">
+      <view class="chart-title">分类占比</view>
+      <view class="chart-body chart-body-pie">
+        <ec-canvas id="chart-pie" canvas-id="chart-pie" ec="{{ ecPie }}"></ec-canvas>
+      </view>
+    </view>
+
+    <!-- 最近 7 天：仅月度视图 -->
+    <view class="chart-card" wx:if="{{!isYearMode}}">
+      <view class="chart-title">最近 7 天</view>
+      <view class="chart-body" wx:if="{{!barEmpty}}">
+        <ec-canvas id="chart-bar" canvas-id="chart-bar" ec="{{ ecBar }}"></ec-canvas>
+      </view>
+      <view class="chart-empty" wx:else>这几天还没记账</view>
+    </view>
+
+    <!-- 趋势：月度近 6 月 / 年度 1–12 月 -->
+    <view class="chart-card">
+      <view class="chart-title">{{trendTitle}}</view>
+      <view class="chart-body">
+        <ec-canvas id="chart-line" canvas-id="chart-line" ec="{{ ecLine }}"></ec-canvas>
+      </view>
+    </view>
+
+    <!-- 分类排行 -->
+    <view class="chart-card" wx:if="{{!empty}}">
+      <view class="chart-title">分类排行</view>
+      <view class="chart-body" style="height: {{rankChartHeight}}rpx;">
+        <ec-canvas id="chart-rank" canvas-id="chart-rank" ec="{{ ecRank }}"></ec-canvas>
+      </view>
+    </view>
+
+    <!-- 小韭菜点评 -->
+    <view class="comment-card">
+      <view class="comment-head">
+        <image class="comment-avatar" src="{{mascotSrc}}" mode="aspectFit" />
+        <text class="comment-label">小韭菜点评</text>
+      </view>
+      <view class="comment-body" wx:if="{{commentLoading}}">菜菜翻账本中…</view>
+      <view class="comment-body" wx:elif="{{commentPlain}}">{{comment}}</view>
+      <view class="comment-body" wx:else>
+        <mp-html
+          content="{{commentHtml}}"
+          tag-style="{{commentTagStyle}}"
+          container-style="{{commentContainerStyle}}"
+          bind:error="onCommentMdError"
+        />
+      </view>
+    </view>
+  </block>
+</view>

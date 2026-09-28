@@ -1,0 +1,40 @@
+---
+description: FastAPI 后端约定：分层、鉴权、时区、LLM、统计与复盘接口
+globs: server/app/**/*
+alwaysApply: false
+---
+
+# 后端（`server/app/`）约定
+
+## 分层
+
+- 路由：`routers/`；入出参：`schemas/`；表：`models/`；配置：`config.py` 的 `settings`。
+- 新接口挂到已有 router；跨域通用逻辑抽到 `services/`，不要在 router 里堆重复 SQL。
+
+## 鉴权与用户隔离
+
+- 需要登录的接口用 `Depends(get_current_openid)`，再按 `user_id` 过滤账单。
+- 禁止返回或日志打印完整密钥、JWT、微信 Secret。
+
+## 时间
+
+- 月/年范围、聚合用东八区：复用 `report.CN_TZ`、`_month_range`、`_resolve_month`。
+- PostgreSQL 按日历月聚合时用 `timezone('Asia/Shanghai', bill_time)` + `to_char(..., 'YYYY-MM')`。
+
+## LLM
+
+- 对话模型：`from ..services.llm import get_llm_client, get_llm_model`（读 `LLM_*`）。
+- Embedding：继续用 `services/embedding.py` 的硅基流动配置，与对话 LLM 密钥可相同但职责分开。
+- JSON 类调用优先用 `chat_json` / `strip_code_fence`，不要从 router 里再抄一套。
+- 复盘生成失败返回兜底文案时**不要写入** `MonthlyReport` 缓存；已误缓存的兜底应视为未命中。
+
+## 统计 `POST /api/v1/stats/overview`
+
+- `mode=month`（默认）：当月汇总 + 近 6 月趋势 + 近 7 天。
+- `mode=year`：全年汇总 + 1–12 月趋势；可不返回近 7 天。
+- `month` 为 `YYYY-MM`；年度模式取其年份。
+
+## 代码风格
+
+- 注释用简体中文，写「为什么」。
+- 异常对前端给明确 `HTTPException` detail；不要吞掉后返回空 200 假装成功（空账单等业务空态除外）。

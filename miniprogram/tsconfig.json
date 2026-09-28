@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "module": "CommonJS",
+    "target": "ES2017",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": false,
+    "types": ["miniprogram-api-typings"],
+    "typeRoots": ["./typings", "./node_modules/@types", "./node_modules"]
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules"]
+}

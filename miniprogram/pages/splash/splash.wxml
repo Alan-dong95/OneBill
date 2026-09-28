@@ -1,0 +1,14 @@
+<view class="splash">
+  <image class="splash-mascot" src="{{mascot}}" mode="aspectFit" />
+  <view class="splash-brand">韭菜保护本</view>
+  <view class="splash-sub" wx:if="{{!loginFailed}}">记账护身，少做一棵韭菜</view>
+  <view class="splash-sub" wx:else>登录没成功，协会门打不开</view>
+
+  <button
+    wx:if="{{loginFailed}}"
+    class="btn-primary splash-retry"
+    hover-class="btn-hover"
+    bindtap="onRetryLogin"
+  >再试一次</button>
+  <view wx:elif="{{entering}}" class="splash-hint">正在进门…</view>
+</view>
