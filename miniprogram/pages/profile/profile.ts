@@ -278,10 +278,6 @@ Page({
     wx.navigateTo({ url: '/pages/about/about' });
   },
 
-  goPrivacy() {
-    wx.navigateTo({ url: '/pages/privacy/privacy' });
-  },
-
   goFeedback() {
     wx.navigateTo({ url: '/pages/feedback/feedback' });
   },

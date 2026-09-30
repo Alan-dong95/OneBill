@@ -57,10 +57,6 @@
       <text class="menu-text">意见反馈</text>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-item" hover-class="menu-hover" bindtap="goPrivacy">
-      <text class="menu-text">隐私政策</text>
-      <text class="menu-arrow">›</text>
-    </view>
     <view class="menu-item" hover-class="menu-hover" bindtap="goAbout">
       <text class="menu-text">关于韭菜保护本</text>
       <text class="menu-arrow">›</text>

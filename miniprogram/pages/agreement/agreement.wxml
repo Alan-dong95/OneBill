@@ -1,0 +1,12 @@
+<view class="page">
+  <view class="card">
+    <text class="plain" wx:if="{{plain}}">协议内容加载失败，请稍后重试</text>
+    <mp-html
+      wx:else
+      content="{{html}}"
+      tag-style="{{tagStyle}}"
+      container-style="{{containerStyle}}"
+      bind:error="onMdError"
+    />
+  </view>
+</view>

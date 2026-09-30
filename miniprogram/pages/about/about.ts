@@ -8,6 +8,6 @@ Page({
   },
 
   goPrivacy() {
-    wx.navigateTo({ url: '/pages/privacy/privacy' });
+    wx.navigateTo({ url: '/pages/agreement/agreement?type=privacy' });
   },
 });

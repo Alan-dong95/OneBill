@@ -6,6 +6,9 @@ App<IAppOption>({
   },
 
   async onLaunch() {
+    // 未同意隐私协议前不触发微信登录，交给启动页弹窗
+    if (!wx.getStorageSync('has_agreed')) return;
+
     try {
       const token = await ensureLogin();
       this.globalData.token = token;

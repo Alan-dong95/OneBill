@@ -38,3 +38,82 @@
   margin-top: 48rpx;
   width: 320rpx;
 }
+
+/* 协议弹窗（样式对齐「我的」昵称弹窗） */
+.modal-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: rgba(26, 46, 31, 0.36);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48rpx;
+  box-sizing: border-box;
+}
+
+.modal-panel {
+  width: 100%;
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 40rpx 32rpx 32rpx;
+  box-sizing: border-box;
+}
+
+.modal-title {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #1a2e1f;
+  text-align: center;
+}
+
+.modal-desc {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  line-height: 1.7;
+  color: #5a6b5e;
+  text-align: left;
+}
+
+.modal-link {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.modal-actions {
+  margin-top: 36rpx;
+  display: flex;
+  gap: 20rpx;
+}
+
+.modal-btn {
+  flex: 1;
+}
+
+/* 灰色拒绝按钮 */
+.btn-refuse {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 24rpx;
+  height: 88rpx;
+  min-height: 88rpx;
+  line-height: 84rpx;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  text-align: center;
+  background: #e8ece9;
+  color: #5a6b5e;
+  border: 2rpx solid #e8ece9;
+}
+
+.btn-refuse::after {
+  border: none;
+}
+
+.btn-refuse-hover {
+  opacity: 0.85;
+}
